@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { toast } from "react-toastify";
 import { useFileStore } from "@/store/fileStore";
 import { useAuthStore } from "@/store/authStore";
@@ -11,7 +11,7 @@ const PaperUpload = () => {
   const router = useRouter();
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const { file, setFile, setPaperId } = useFileStore();
-  const { accessToken, setAccessToken } = useAuthStore();
+  const { accessToken } = useAuthStore();
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();

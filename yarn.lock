@@ -1598,6 +1598,13 @@
     lodash.clonedeep "^4.5.0"
     validator "^13.12.0"
 
+"@yoopta/exports@^4.9.7":
+  version "4.9.7"
+  resolved "https://registry.yarnpkg.com/@yoopta/exports/-/exports-4.9.7.tgz#0d66ced6b00c8e60f622e7b30232468ade519c05"
+  integrity sha512-JJjUW8Bp9E8OZNXnLoHhKPNPbO+NSVp8nUDw0QduOfcIbLXAJaF+XCPkEIZxc2JwnNFiBClshlQiieiqyTtKAA==
+  dependencies:
+    marked "^13.0.0"
+
 "@yoopta/file@^4.9.7":
   version "4.9.7"
   resolved "https://registry.yarnpkg.com/@yoopta/file/-/file-4.9.7.tgz#462e8fd99525d1d086078eaa556197dd899b62c6"
@@ -3313,6 +3320,11 @@ lucide-react@^0.469.0:
   version "0.469.0"
   resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.469.0.tgz#f16936ca6521482fef754a7eabb310e6c68e1482"
   integrity sha512-28vvUnnKQ/dBwiCQtwJw7QauYnE7yd2Cyp4tTTJpvglX4EMpbflcdBgrgToX2j71B3YvugK/NH3BGUk+E/p/Fw==
+
+marked@^13.0.0:
+  version "13.0.3"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-13.0.3.tgz#5c5b4a5d0198060c7c9bc6ef9420a7fed30f822d"
+  integrity sha512-rqRix3/TWzE9rIoFGIn8JmsVfhiuC8VIQ8IdX5TfzmeBucdY05/0UlzKaw0eVtpcN/OdVFpBk7CjKGo9iHJ/zA==
 
 math-intrinsics@^1.1.0:
   version "1.1.0"

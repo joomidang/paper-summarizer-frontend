@@ -3,12 +3,12 @@ import { useAuthStore } from "@/store/authStore";
 import React, { useEffect } from "react";
 
 const Home = () => {
-  const { accessToken, setAccessToken } = useAuthStore();
+  const { setAccessToken } = useAuthStore();
 
   useEffect(() => {
     const getCookie = (name: string): string | null => {
       const cookies = document.cookie.split(";");
-      for (let cookie of cookies) {
+      for (const cookie of cookies) {
         const [cookieName, cookieValue] = cookie.trim().split("=");
         if (cookieName === name) {
           return decodeURIComponent(cookieValue);
@@ -17,13 +17,10 @@ const Home = () => {
       return null;
     };
 
-    // 쿠키에서 accessToken 가져오기
     const accessTokenFromCookie = getCookie("accessToken");
 
-    // 토큰이 존재하는 경우 zustand 상태에 저장
     if (accessTokenFromCookie) {
       setAccessToken(accessTokenFromCookie);
-      console.log("Access token saved to store from cookie", accessToken);
     } else {
       console.log("No access token found in cookies");
     }

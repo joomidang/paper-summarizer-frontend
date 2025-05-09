@@ -15,6 +15,7 @@
     "@yoopta/code": "^4.9.7",
     "@yoopta/divider": "^4.9.7",
     "@yoopta/editor": "^4.9.7",
+    "@yoopta/exports": "^4.9.7",
     "@yoopta/file": "^4.9.7",
     "@yoopta/headings": "^4.9.7",
     "@yoopta/image": "^4.9.7",
