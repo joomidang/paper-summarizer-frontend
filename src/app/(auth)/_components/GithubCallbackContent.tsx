@@ -1,25 +1,12 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { apiUrl } from "./Login";
-//import { useAuthStore } from "@/store/authStore";
 
-const AuthCallback = () => {
+const GithubCallbackContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string>("");
-  //const { setAccessToken } = useAuthStore();
-
-  //   const getTokenFromCookie = (cookieName: string): string | null => {
-  //     const cookies = document.cookie.split(";");
-  //     for (let cookie of cookies) {
-  //       const [name, value] = cookie.trim().split("=");
-  //       if (name === cookieName) {
-  //         return decodeURIComponent(value);
-  //       }
-  //     }
-  //     return null;
-  //   };
 
   useEffect(() => {
     const handleAuthCallback = async () => {
@@ -29,7 +16,9 @@ const AuthCallback = () => {
         console.log("GitHub 인증 코드:", code);
 
         if (!code) {
-          throw new Error("인증 코드를 찾을 수 없습니다");
+          console.log("code가 없습니다.");
+          router.replace("/");
+          return;
         }
 
         const response = await fetch(`/api/auth/github/callback?code=${code}`, {
@@ -41,9 +30,6 @@ const AuthCallback = () => {
         });
 
         console.log("백엔드 응답 상태:", response.status);
-
-        const cookies = document.cookie;
-        console.log("응답 후 쿠키:", cookies);
 
         if (response.ok) {
           console.log("인증 성공! 홈으로 이동합니다.");
@@ -68,7 +54,7 @@ const AuthCallback = () => {
     };
 
     handleAuthCallback();
-  }, [router, apiUrl, searchParams]);
+  }, [router, searchParams]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
@@ -76,12 +62,11 @@ const AuthCallback = () => {
         <div className="text-red-600 text-xl">{error}</div>
       ) : (
         <div className="flex flex-col items-center">
-          <div className="animate-spin w-12 h-12 border-4 border-[#2A437B] border-t-transparent rounded-full mb-4"></div>
-          <p className="text-xl text-gray-700">GitHub 인증 처리 중입니다...</p>
+          <p className="text-xl text-gray-700">GitHub 인증 완료 중...</p>
         </div>
       )}
     </div>
   );
 };
 
-export default AuthCallback;
+export default GithubCallbackContent;
