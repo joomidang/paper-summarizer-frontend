@@ -5,6 +5,7 @@ import { apiUrl } from "@/app/(auth)/_components/Login";
 import { useFileStore } from "@/store/fileStore";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/authStore";
 
 const PaperAnalyze = () => {
   const [progress, setProgress] = useState<number>(0);
@@ -12,7 +13,7 @@ const PaperAnalyze = () => {
   const { paperId } = useFileStore();
   const hasRequestedRef = useRef<boolean>(false);
   const router = useRouter();
-
+  const { accessToken } = useAuthStore();
   const handleAnalyze = async () => {
     setIsLoading(true);
     setProgress(0);
@@ -29,8 +30,7 @@ const PaperAnalyze = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxNDA2Mjk5MTciLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzQ2ODAxNTIyfQ.TdMW8V9JetMd8h3t7IVgNJxEmU6A3pJdyuVSFuEIgLkWVK61y-a-8EwAAGSmE4TRk431RUl2L00AmrIepIB7wg",
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           prompt: "test",

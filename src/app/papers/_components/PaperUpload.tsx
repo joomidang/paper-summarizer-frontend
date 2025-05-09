@@ -53,8 +53,7 @@ const PaperUpload = () => {
     accessToken: string
   ) => {
     e.preventDefault();
-    console.log("논문 업로드 버튼 클릭");
-
+    console.log("논문 업로드");
     const formData = new FormData();
     formData.append("file", file);
     if (file?.name) formData.append("title", file.name);
@@ -90,16 +89,6 @@ const PaperUpload = () => {
       throw error;
     }
   };
-
-  useEffect(() => {
-    // TODO: 로그인 완료시 토큰 저장하도록 수정 (토큰 노출X)
-
-    console.log(file, accessToken);
-    setAccessToken(
-      "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxNDA2Mjk5MTciLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzQ2ODAwNTQxfQ.Z4Oe_zMeh9H768ggHeC7phHRQq09tfaeL4dkoHYMbN5CZrOfdb8XY_GagEAnyrST85vBR7nEQe6M1h9SJgZi7Q"
-    );
-    //esLint-disabled-next-line
-  }, [file]);
 
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-[#fcfbf6] py-12">

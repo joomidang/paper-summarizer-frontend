@@ -5,8 +5,8 @@ import ExtractedContent from "./ExtractedContent";
 
 const PaperEdit = () => {
   return (
-    <div className="flex justify-center items-center ">
-      <div className="bg-white border-[1px] xl:w-[43.125rem] min-h-[50.938rem]">
+    <div className="flex justify-center items-start pb-11 gap-4">
+      <div className="bg-white shadow-sm rounded-lg border border-gray-300 xl:w-[43.125rem] min-h-[50.938rem]">
         <NotionEditor />
       </div>
       <div>

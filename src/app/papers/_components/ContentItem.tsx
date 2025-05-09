@@ -22,9 +22,6 @@ const ContentItem: React.FC<ContentItemProps> = ({
         <span className="text-sm">
           {type} {number}: {description}
         </span>
-        <button className="bg-gray-200 text-gray-700 px-2 py-1 text-xs rounded">
-          배치됨
-        </button>
       </div>
     </div>
   );
