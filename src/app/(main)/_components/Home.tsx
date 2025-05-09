@@ -2,22 +2,29 @@
 import { useAuthStore } from "@/store/authStore";
 import React, { useEffect } from "react";
 
-interface HomeProps {
-  serverAccessToken?: string;
-}
-
-const Home = ({ serverAccessToken }: HomeProps) => {
+const Home = () => {
   const { setAccessToken } = useAuthStore();
-  console.log(serverAccessToken);
 
   useEffect(() => {
-    if (serverAccessToken) {
-      setAccessToken(serverAccessToken);
-      console.log("Access token saved from server component !");
+    const getCookie = (name: string): string | null => {
+      const cookies = document.cookie.split(";");
+      for (const cookie of cookies) {
+        const [cookieName, cookieValue] = cookie.trim().split("=");
+        if (cookieName === name) {
+          return decodeURIComponent(cookieValue);
+        }
+      }
+      return null;
+    };
+
+    const accessTokenFromCookie = getCookie("accessToken");
+
+    if (accessTokenFromCookie) {
+      setAccessToken(accessTokenFromCookie);
     } else {
-      console.log("No access token from server component");
+      console.log("No access token found in cookies");
     }
-  }, [serverAccessToken, setAccessToken]);
+  }, [setAccessToken]);
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
