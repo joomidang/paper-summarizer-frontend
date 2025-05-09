@@ -28,8 +28,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-toastify": "^11.0.5",
-    "slate": "^0.114.0",
-    "slate-react": "^0.114.2",
+    "slate": "^0.114.3-20250505153718",
+    "slate-dom": "^0.114.0",
+    "slate-react": "^0.114.3-20250505153718",
     "zustand": "^5.0.4"
   },
   "devDependencies": {
