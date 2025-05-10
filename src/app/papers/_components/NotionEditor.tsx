@@ -69,9 +69,9 @@ const NotionEditor = ({
 }) => {
   const editor: YooEditor = useMemo(() => createYooptaEditor(), []);
   const [value, setValue] = useState<YooptaContentValue>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [markdownUrl, setMarkdownUrl] = useState<string>(initialMarkdownUrl);
+  const [, setLoading] = useState(true);
+  const [, setError] = useState(null);
+  const [markdownUrl] = useState<string>(initialMarkdownUrl);
   const selectionRef = useRef(null);
 
   const plugins = [
@@ -182,7 +182,6 @@ const NotionEditor = ({
     loadMarkdownContent();
   }, [editor, selectionRef, markdownUrl]);
 
-  // 별도로 value 변경 확인
   useEffect(() => {
     console.log("에디터 value 변경됨:", value);
   }, [value]);

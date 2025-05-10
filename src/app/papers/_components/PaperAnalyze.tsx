@@ -24,7 +24,7 @@ const PaperAnalyze = () => {
   const eventSourceRef = useRef<EventSource | null>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
-  const { summaryId, setSummaryId } = useFileStore();
+  const { setSummaryId } = useFileStore();
   //const { accessToken } = useAuthStore();
 
   // SSE 이벤트 구독

@@ -5,7 +5,7 @@ import ContentItem from "./ContentItem";
 import { apiUrl } from "@/app/(auth)/_components/Login";
 import { getCookie } from "@/app/utils/getCookie";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 
 interface ExtractedContentProps {
   summaryId: string;
@@ -23,7 +23,7 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>(["AI", "GPT"]);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+  //const router = useRouter();
 
   const contentItems = [
     { type: "이미지" as const, number: 1, description: "Lorem Ipsum" },
