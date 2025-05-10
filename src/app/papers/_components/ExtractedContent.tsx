@@ -2,14 +2,29 @@
 
 import React, { useState, KeyboardEvent } from "react";
 import ContentItem from "./ContentItem";
+import { apiUrl } from "@/app/(auth)/_components/Login";
+import { getCookie } from "@/app/utils/getCookie";
+import { toast } from "react-toastify";
+import { useSummaryStore } from "@/store/summaryStore";
 
-const ExtractedContent: React.FC = () => {
+interface ExtractedContentProps {
+  summaryId: string;
+}
+
+const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
   const [isPublic, setIsPublic] = useState(true);
-  const [author, setAuthor] = useState("");
-  const [title, setTitle] = useState("");
-  const [date, setDate] = useState("");
+  //const [author, setAuthor] = useState("");
   const [tagInput, setTagInput] = useState("");
-  const [tags, setTags] = useState<string[]>(["AI", "GPT"]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { title, brief, markdownContent, tags, setTitle, setBrief, setTags } =
+    useSummaryStore();
+
+  console.log("ExtractedContent - store 상태:", {
+    title,
+    brief,
+    markdownContent: markdownContent.substring(0, 100) + "...",
+    tags,
+  });
 
   const contentItems = [
     { type: "이미지" as const, number: 1, description: "Lorem Ipsum" },
@@ -34,6 +49,129 @@ const ExtractedContent: React.FC = () => {
 
   const removeTag = (indexToRemove: number) => {
     setTags(tags.filter((_, index) => index !== indexToRemove));
+  };
+
+  const saveDraftSummary = async () => {
+    if (!title.trim()) {
+      toast.error("제목을 입력해주세요.");
+      return;
+    }
+
+    if (!markdownContent.trim()) {
+      toast.error("마크다운 내용이 없습니다. 에디터에서 내용을 작성해주세요.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const requestBody = {
+        title: title.trim(),
+        brief: brief.trim() || "요약 내용이 비어있습니다.",
+        markdownContent: markdownContent,
+        tags: tags,
+      };
+
+      console.log("Saving draft:", {
+        summaryId,
+        requestBody: {
+          ...requestBody,
+          markdownContent:
+            requestBody.markdownContent.substring(0, 100) + "...",
+        },
+      });
+
+      console.log(typeof +summaryId);
+
+      const response = await fetch(
+        `${apiUrl}/api/summaries/${summaryId}/draft`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getCookie("accessToken")}`,
+          },
+          credentials: "include",
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `초안 저장 실패: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      console.log("Draft saved successfully:", result);
+      toast.success("요약이 임시 저장되었습니다.");
+    } catch (error) {
+      console.error("Draft saving error:", error);
+      toast.error("임시 저장 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const publishSummary = async () => {
+    if (!title.trim()) {
+      toast.error("제목을 입력해주세요.");
+      return;
+    }
+
+    if (!markdownContent.trim()) {
+      toast.error("마크다운 내용이 없습니다. 에디터에서 내용을 작성해주세요.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const requestBody = {
+        title: title.trim(),
+        brief: brief.trim() || "요약 내용이 비어있습니다.",
+        markdownContent: markdownContent,
+        tags: tags,
+      };
+
+      console.log("Publishing summary:", {
+        summaryId,
+        requestBody: {
+          ...requestBody,
+          markdownContent:
+            requestBody.markdownContent.substring(0, 100) + "...",
+        },
+      });
+
+      const response = await fetch(
+        `${apiUrl}/api/summaries/${summaryId}/publish`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getCookie("accessToken")}`,
+          },
+          credentials: "include",
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Published 요청 실패: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      console.log("Published successfully:", result);
+      toast.success("요약이 성공적으로 출판되었습니다.");
+      // router.push(`/papers/published/${summaryId}`);
+    } catch (error) {
+      console.error("Publishing error:", error);
+      toast.error("출판 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -75,41 +213,42 @@ const ExtractedContent: React.FC = () => {
           <h2 className="text-lg font-bold mb-4">메타데이터</h2>
           <div className="mb-4">
             <label htmlFor="title" className="block text-sm font-medium mb-1">
-              제목
+              제목 <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               id="title"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
               placeholder="Lorem Ipsum is simply dummy text of the printing"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              required
             />
           </div>
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label htmlFor="author" className="block text-sm font-medium mb-1">
               저자
             </label>
             <input
               type="text"
               id="author"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
               placeholder="구성재, 김기현, 선지원"
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
             />
-          </div>
+          </div> */}
           <div className="mb-4">
-            <label htmlFor="date" className="block text-sm font-medium mb-1">
-              출판일
+            <label htmlFor="brief" className="block text-sm font-medium mb-1">
+              초록
             </label>
-            <input
-              type="text"
-              id="date"
-              className="w-full p-2 border border-gray-300 rounded"
-              placeholder="2025. 04. 10."
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
+            <textarea
+              id="brief"
+              rows={3}
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
+              placeholder="이 논문은 ···"
+              value={brief}
+              onChange={(e) => setBrief(e.target.value)}
             />
           </div>
           <div className="mb-4">
@@ -137,7 +276,7 @@ const ExtractedContent: React.FC = () => {
               </label>
             </div>
           </div>
-          <div className="mb-6 ">
+          <div className="mb-6">
             <label htmlFor="tags" className="block text-sm font-medium mb-1">
               태그
             </label>
@@ -175,9 +314,29 @@ const ExtractedContent: React.FC = () => {
               </div>
             </div>
           </div>
-          <button className="w-full py-2 bg-[#42598C] text-white rounded font-medium">
-            저장하기
-          </button>
+          <div className="flex justify-between">
+            <button
+              onClick={saveDraftSummary}
+              className={`w-[47%] py-2 rounded font-medium transition-colors ${
+                isLoading
+                  ? "bg-gray-400 text-gray-100 cursor-not-allowed"
+                  : "bg-[#6b8fdc] text-white hover:bg-[#355174]"
+              }`}
+            >
+              임시저장
+            </button>
+            <button
+              onClick={publishSummary}
+              disabled={isLoading}
+              className={`w-[47%] py-2 rounded font-medium transition-colors ${
+                isLoading
+                  ? "bg-gray-400 text-gray-100 cursor-not-allowed"
+                  : "bg-[#42598C] text-white hover:bg-[#355174]"
+              }`}
+            >
+              {isLoading ? "출판 중..." : "발행하기"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
