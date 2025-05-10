@@ -49,7 +49,23 @@ const PaperAnalyze = () => {
       clearInterval(interval);
       setProgress(100);
       toast.success("분석이 완료되었습니다");
-      router.push(`/papers/upload/edit/${paperId}`);
+
+      // 카운트다운 시작 (1분 30초 = 90초)
+      let remainingSeconds = 90;
+      toast.info(`${remainingSeconds}초 후 편집 페이지로 이동합니다`, {
+        autoClose: false,
+      });
+
+      const countdownInterval = setInterval(() => {
+        remainingSeconds -= 1;
+
+        if (remainingSeconds <= 0) {
+          clearInterval(countdownInterval);
+          router.push(`/papers/upload/edit/${paperId}`);
+        } else {
+          toast.update(`${remainingSeconds}초 후 편집 페이지로 이동합니다`);
+        }
+      }, 1000);
     } catch (error) {
       console.error("분석 중 오류 발생:", error);
       toast.error("분석 요청 중 오류가 발생했습니다");

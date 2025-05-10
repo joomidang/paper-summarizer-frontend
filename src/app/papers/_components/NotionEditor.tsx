@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import YooptaEditor, {
   createYooptaEditor,
   YooEditor,
@@ -26,20 +26,50 @@ import {
 import ActionMenu, { DefaultActionMenuRender } from "@yoopta/action-menu-list";
 import Toolbar, { DefaultToolbarRender } from "@yoopta/toolbar";
 import LinkTool, { DefaultLinkToolRender } from "@yoopta/link-tool";
+import { markdown } from "@yoopta/exports";
+import Link from "@yoopta/link";
+import Callout from "@yoopta/callout";
+import Table from "@yoopta/table";
+import Embed from "@yoopta/embed";
 
 const editorStyles: React.CSSProperties = {
   padding: "20px",
+  maxWidth: "100%",
   minHeight: "100vh",
-  //fontFamily: "Inter, sans-serif",
   fontFamily: "pretendard",
   fontSize: "18px",
   lineHeight: "1.5",
   color: "#37352f",
+  overflowY: "auto",
+};
+
+const fetchMarkdownFromUrl = async (url: string) => {
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const markdownContent = await response.text();
+    return markdownContent;
+  } catch (error) {
+    console.error("마크다운 파일 가져오기 실패:", error);
+    throw error;
+  }
 };
 
 const NotionEditor: React.FC = () => {
   const editor: YooEditor = useMemo(() => createYooptaEditor(), []);
   const [value, setValue] = useState<YooptaContentValue>();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [markdownUrl, setMarkdownUrl] = useState<string>(
+    "https://paper-dev-test-magic-pdf-output.s3.ap-northeast-2.amazonaws.com/summaries/4452/767d59df-2316-4ce8-bf08-4d0c48dcb949.md"
+  );
+  const selectionRef = useRef(null);
 
   const plugins = [
     Paragraph,
@@ -52,8 +82,35 @@ const NotionEditor: React.FC = () => {
     Blockquote,
     Code,
     File,
-    Image,
     Divider,
+    Link,
+    Callout,
+    Table,
+    Embed,
+    Image.extend({
+      elementProps: {
+        image: (props) => {
+          let src = props.src;
+
+          // S3 이미지인 경우
+          if (src?.includes("s3.ap-northeast-2.amazonaws.com")) {
+            src = `/api/s3-proxy?url=${encodeURIComponent(src)}`;
+          }
+
+          // 기타 외부 이미지인 경우
+          else if (src?.startsWith("http")) {
+            src = `/api/image-proxy?url=${encodeURIComponent(src)}`;
+          }
+
+          return {
+            ...props,
+            src,
+            crossOrigin: "anonymous",
+            referrerPolicy: "no-referrer",
+          };
+        },
+      },
+    }),
   ];
 
   // 텍스트 마크 스타일
@@ -84,6 +141,47 @@ const NotionEditor: React.FC = () => {
     //console.log("Editor content changed:", newValue, options);
   };
 
+  useEffect(() => {
+    const loadMarkdownContent = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        if (!markdownUrl) {
+          throw new Error("마크다운 URL을 찾을 수 없습니다.");
+        }
+        console.log("마크다운 URL:", markdownUrl);
+
+        const markdownContent = await fetchMarkdownFromUrl(markdownUrl);
+        if (!markdownContent) {
+          throw new Error("마크다운 내용이 비어있습니다.");
+        }
+
+        console.log(
+          "불러온 마크다운 내용:",
+          markdownContent.substring(0, 100) + "..."
+        );
+
+        // 마크다운을 Yoopta 에디터 형식으로 변환
+        const yooptaContent = markdown.deserialize(editor, markdownContent);
+        setValue(yooptaContent);
+        console.log("에디터 값:", yooptaContent);
+        editor.setEditorValue(yooptaContent);
+      } catch (err) {
+        console.error("마크다운 로드 오류:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMarkdownContent();
+  }, [editor, selectionRef, markdownUrl]);
+
+  // 별도로 value 변경 확인
+  useEffect(() => {
+    console.log("에디터 value 변경됨:", value);
+  }, [value]);
+
   return (
     <div style={editorStyles}>
       <YooptaEditor
@@ -91,10 +189,15 @@ const NotionEditor: React.FC = () => {
         plugins={plugins}
         marks={MARKS}
         tools={TOOLS}
-        value={value}
+        //value={value}
         onChange={onChange}
         placeholder="/'를 입력하여 명령어를 확인하세요..."
         autoFocus={true}
+        style={{
+          width: "100%",
+          maxWidth: "100%",
+          paddingBottom: "20px", // 원하는 값으로 조정
+        }}
       />
     </div>
   );
