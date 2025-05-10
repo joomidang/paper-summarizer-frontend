@@ -5,25 +5,26 @@ import ContentItem from "./ContentItem";
 import { apiUrl } from "@/app/(auth)/_components/Login";
 import { getCookie } from "@/app/utils/getCookie";
 import { toast } from "react-toastify";
-//import { useRouter } from "next/navigation";
+import { useSummaryStore } from "@/store/summaryStore";
 
 interface ExtractedContentProps {
   summaryId: string;
-  markdownContent?: string;
 }
 
-const ExtractedContent: React.FC<ExtractedContentProps> = ({
-  summaryId,
-  markdownContent = "",
-}) => {
+const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
   const [isPublic, setIsPublic] = useState(true);
   const [author, setAuthor] = useState("");
-  const [title, setTitle] = useState("");
-  const [brief, setBrief] = useState("");
   const [tagInput, setTagInput] = useState("");
-  const [tags, setTags] = useState<string[]>(["AI", "GPT"]);
   const [isLoading, setIsLoading] = useState(false);
-  //const router = useRouter();
+  const { title, brief, markdownContent, tags, setTitle, setBrief, setTags } =
+    useSummaryStore();
+
+  console.log("ExtractedContent - store 상태:", {
+    title,
+    brief,
+    markdownContent: markdownContent.substring(0, 100) + "...",
+    tags,
+  });
 
   const contentItems = [
     { type: "이미지" as const, number: 1, description: "Lorem Ipsum" },
@@ -56,19 +57,28 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({
       return;
     }
 
+    if (!markdownContent.trim()) {
+      toast.error("마크다운 내용이 없습니다. 에디터에서 내용을 작성해주세요.");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       const requestBody = {
         title: title.trim(),
-        brief: "이 논문은 어쩌고...",
-        markdownContent: markdownContent || "# 요약\n기본 내용입니다.",
+        brief: brief.trim() || "요약 내용이 비어있습니다.",
+        markdownContent: markdownContent,
         tags: tags,
       };
 
       console.log("Publishing summary:", {
         summaryId,
-        requestBody,
+        requestBody: {
+          ...requestBody,
+          markdownContent:
+            requestBody.markdownContent.substring(0, 100) + "...",
+        },
       });
 
       const response = await fetch(
@@ -94,6 +104,9 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({
       console.log("Published successfully:", result);
 
       toast.success("요약이 성공적으로 출판되었습니다!");
+
+      // 성공 후 리다이렉트 (필요에 따라 조정)
+      // router.push(`/papers/published/${summaryId}`);
     } catch (error) {
       console.error("Publishing error:", error);
       toast.error("출판 중 오류가 발생했습니다.");
@@ -167,12 +180,12 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="date" className="block text-sm font-medium mb-1">
+            <label htmlFor="brief" className="block text-sm font-medium mb-1">
               초록
             </label>
-            <input
-              type="text"
+            <textarea
               id="brief"
+              rows={3}
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
               placeholder="이 논문은 ···"
               value={brief}

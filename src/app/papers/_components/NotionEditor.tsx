@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Descendant, Text, Element as SlateElement } from "slate";
 import YooptaEditor, {
   createYooptaEditor,
   YooEditor,
@@ -43,6 +44,10 @@ const editorStyles: React.CSSProperties = {
   overflowY: "auto",
 };
 
+const isText = (node: Descendant): node is Text => {
+  return !("children" in node);
+};
+
 const fetchMarkdownFromUrl = async (url: string) => {
   try {
     const response = await fetch(url, {
@@ -73,7 +78,7 @@ const NotionEditor = ({
   const [, setError] = useState(null);
   const [markdownUrl] = useState<string>(initialMarkdownUrl);
   const selectionRef = useRef(null);
-  const { setMarkdownContent } = useSummaryStore();
+  const { setMarkdownContent, setTitle } = useSummaryStore();
 
   const plugins = [
     Paragraph,
@@ -138,6 +143,29 @@ const NotionEditor = ({
     },
   };
 
+  const extractTitleFromYoopta = (yooptaContent: YooptaContentValue) => {
+    try {
+      const items = Object.values(yooptaContent);
+      const titleItem = items.find((item) => item.meta?.order === 0);
+
+      if (titleItem) {
+        console.log("제목 아이템:", titleItem);
+        const element = titleItem.value?.[0] as SlateElement;
+        const firstChild = element.children?.[0];
+        const title = firstChild && isText(firstChild) ? firstChild.text : "";
+
+        if (title) {
+          console.log("추출된 제목:", title);
+          setTitle(title);
+        }
+      } else {
+        console.log("meta.order가 0인 항목을 찾을 수 없습니다.");
+      }
+    } catch (error) {
+      console.error("제목 추출 중 오류:", error);
+    }
+  };
+
   const onChange = (
     newValue: YooptaContentValue,
     options: YooptaOnChangeOptions
@@ -149,6 +177,8 @@ const NotionEditor = ({
       const mdContent = markdown.serialize(editor, newValue || {});
       setMarkdownContent(mdContent);
       console.log("변경된 내용을 마크다운으로 변환하여 store에 저장");
+
+      extractTitleFromYoopta(newValue);
     } catch (error) {
       console.error("마크다운 변환 실패:", error);
     }
@@ -182,6 +212,8 @@ const NotionEditor = ({
 
         setMarkdownContent(markdownContent);
         console.log("초기 마크다운을 store에 저장", markdownContent);
+
+        extractTitleFromYoopta(yooptaContent);
       } catch (err) {
         console.error("마크다운 로드 오류:", err);
       } finally {
