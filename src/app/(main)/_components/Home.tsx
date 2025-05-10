@@ -1,4 +1,5 @@
 "use client";
+import { getCookie } from "@/app/utils/getCookie";
 import { useAuthStore } from "@/store/authStore";
 import React, { useEffect } from "react";
 
@@ -6,17 +7,6 @@ const Home = () => {
   const { setAccessToken } = useAuthStore();
 
   useEffect(() => {
-    const getCookie = (name: string): string | null => {
-      const cookies = document.cookie.split(";");
-      for (const cookie of cookies) {
-        const [cookieName, cookieValue] = cookie.trim().split("=");
-        if (cookieName === name) {
-          return decodeURIComponent(cookieValue);
-        }
-      }
-      return null;
-    };
-
     const accessTokenFromCookie = getCookie("accessToken");
 
     if (accessTokenFromCookie) {

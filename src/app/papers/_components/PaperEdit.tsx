@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import NotionEditor from "./NotionEditor";
 import ExtractedContent from "./ExtractedContent";
 import { apiUrl } from "@/app/(auth)/_components/Login";
+import { markdown } from "@yoopta/exports";
+import { getCookie } from "@/app/(main)/_components/Home";
 
 interface PaperEditProps {
   summaryId: string;
@@ -15,17 +17,6 @@ const PaperEdit = ({ summaryId }: PaperEditProps) => {
   //const { accessToken } = useAuthStore();
   const hasRun = useRef(false);
   console.log(summaryId);
-
-  const getCookie = (name: string): string | null => {
-    const cookies = document.cookie.split(";");
-    for (const cookie of cookies) {
-      const [cookieName, cookieValue] = cookie.trim().split("=");
-      if (cookieName === name) {
-        return decodeURIComponent(cookieValue);
-      }
-    }
-    return null;
-  };
 
   useEffect(() => {
     const fetchSummaryData = async () => {
