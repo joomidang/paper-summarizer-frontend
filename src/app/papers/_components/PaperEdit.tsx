@@ -2,7 +2,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import NotionEditor from "./NotionEditor";
 import ExtractedContent from "./ExtractedContent";
-import { useAuthStore } from "@/store/authStore";
 import { apiUrl } from "@/app/(auth)/_components/Login";
 
 interface PaperEditProps {
@@ -10,20 +9,31 @@ interface PaperEditProps {
 }
 
 const PaperEdit = ({ summaryId }: PaperEditProps) => {
-  const [, setSummaryData] = useState(null);
+  const [summaryData, setSummaryData] = useState(null);
   //const [loading, setLoading] = useState(true);
   //const [error, setError] = useState(null);
+  //const { accessToken } = useAuthStore();
   const hasRun = useRef(false);
-  const { accessToken } = useAuthStore();
-  console.log(summaryId, accessToken);
+  console.log(summaryId);
+
+  const getCookie = (name: string): string | null => {
+    const cookies = document.cookie.split(";");
+    for (const cookie of cookies) {
+      const [cookieName, cookieValue] = cookie.trim().split("=");
+      if (cookieName === name) {
+        return decodeURIComponent(cookieValue);
+      }
+    }
+    return null;
+  };
 
   useEffect(() => {
     const fetchSummaryData = async () => {
       try {
-        const response = await fetch(`${apiUrl}/api/summaries/9/edit`, {
+        const response = await fetch(`${apiUrl}/api/summaries/3/edit`, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${getCookie("accessToken")}`,
           },
           credentials: "include",
         });
@@ -37,15 +47,13 @@ const PaperEdit = ({ summaryId }: PaperEditProps) => {
         console.log("요약 데이터 불러오기 성공:", data);
         return data;
       } catch (error) {
-        console.error("요약 수정 데이터 가져오기 실패:", error);
+        console.error("요약 수정 데이터 가져오기 실패: ", error);
         throw error;
       }
     };
 
-    //if (summaryId && accessToken && !hasRun.current) {
     hasRun.current = true;
     fetchSummaryData();
-    //}
   }, []);
 
   return (
