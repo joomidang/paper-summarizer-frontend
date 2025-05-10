@@ -31,7 +31,7 @@ import Link from "@yoopta/link";
 import Callout from "@yoopta/callout";
 import Table from "@yoopta/table";
 import Embed from "@yoopta/embed";
-
+import { useSummaryStore } from "@/store/summaryStore";
 const editorStyles: React.CSSProperties = {
   padding: "20px",
   maxWidth: "100%",
@@ -73,6 +73,7 @@ const NotionEditor = ({
   const [, setError] = useState(null);
   const [markdownUrl] = useState<string>(initialMarkdownUrl);
   const selectionRef = useRef(null);
+  const { setMarkdownContent } = useSummaryStore();
 
   const plugins = [
     Paragraph,
@@ -143,7 +144,14 @@ const NotionEditor = ({
   ) => {
     setValue(newValue);
     console.log(options);
-    //console.log("Editor content changed:", newValue, options);
+
+    try {
+      const mdContent = markdown.serialize(editor, newValue || {});
+      setMarkdownContent(mdContent);
+      console.log("변경된 내용을 마크다운으로 변환하여 store에 저장");
+    } catch (error) {
+      console.error("마크다운 변환 실패:", error);
+    }
   };
 
   useEffect(() => {
@@ -167,11 +175,13 @@ const NotionEditor = ({
           markdownContent.substring(0, 100) + "..."
         );
 
-        // 마크다운을 Yoopta 에디터 형식으로 변환
         const yooptaContent = markdown.deserialize(editor, markdownContent);
         setValue(yooptaContent);
         console.log("에디터 값:", yooptaContent);
         editor.setEditorValue(yooptaContent);
+
+        setMarkdownContent(markdownContent);
+        console.log("초기 마크다운을 store에 저장", markdownContent);
       } catch (err) {
         console.error("마크다운 로드 오류:", err);
       } finally {
@@ -180,7 +190,7 @@ const NotionEditor = ({
     };
 
     loadMarkdownContent();
-  }, [editor, selectionRef, markdownUrl]);
+  }, [editor, selectionRef, markdownUrl, setMarkdownContent]);
 
   useEffect(() => {
     console.log("에디터 value 변경됨:", value);

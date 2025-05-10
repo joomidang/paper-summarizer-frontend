@@ -19,7 +19,7 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({
   const [isPublic, setIsPublic] = useState(true);
   const [author, setAuthor] = useState("");
   const [title, setTitle] = useState("");
-  const [date, setDate] = useState("");
+  const [brief, setBrief] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>(["AI", "GPT"]);
   const [isLoading, setIsLoading] = useState(false);
@@ -168,15 +168,15 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({
           </div>
           <div className="mb-4">
             <label htmlFor="date" className="block text-sm font-medium mb-1">
-              출판일
+              초록
             </label>
             <input
               type="text"
-              id="date"
+              id="brief"
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
-              placeholder="2025. 04. 10."
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
+              placeholder="이 논문은 ···"
+              value={brief}
+              onChange={(e) => setBrief(e.target.value)}
             />
           </div>
           <div className="mb-4">
