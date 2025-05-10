@@ -27,6 +27,10 @@ import ActionMenu, { DefaultActionMenuRender } from "@yoopta/action-menu-list";
 import Toolbar, { DefaultToolbarRender } from "@yoopta/toolbar";
 import LinkTool, { DefaultLinkToolRender } from "@yoopta/link-tool";
 import { markdown } from "@yoopta/exports";
+import Link from "@yoopta/link";
+import Callout from "@yoopta/callout";
+import Table from "@yoopta/table";
+import Embed from "@yoopta/embed";
 
 const editorStyles: React.CSSProperties = {
   padding: "20px",
@@ -49,7 +53,6 @@ const fetchMarkdownFromUrl = async (url: string) => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    // 텍스트로 응답 받기
     const markdownContent = await response.text();
     return markdownContent;
   } catch (error) {
@@ -79,8 +82,35 @@ const NotionEditor: React.FC = () => {
     Blockquote,
     Code,
     File,
-    Image,
     Divider,
+    Link,
+    Callout,
+    Table,
+    Embed,
+    Image.extend({
+      elementProps: {
+        image: (props) => {
+          let src = props.src;
+
+          // S3 이미지인 경우
+          if (src?.includes("s3.ap-northeast-2.amazonaws.com")) {
+            src = `/api/s3-proxy?url=${encodeURIComponent(src)}`;
+          }
+
+          // 기타 외부 이미지인 경우
+          else if (src?.startsWith("http")) {
+            src = `/api/image-proxy?url=${encodeURIComponent(src)}`;
+          }
+
+          return {
+            ...props,
+            src,
+            crossOrigin: "anonymous",
+            referrerPolicy: "no-referrer",
+          };
+        },
+      },
+    }),
   ];
 
   // 텍스트 마크 스타일
