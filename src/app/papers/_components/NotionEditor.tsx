@@ -53,6 +53,7 @@ const fetchMarkdownFromUrl = async (url: string) => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
+    // 텍스트로 응답 받기
     const markdownContent = await response.text();
     return markdownContent;
   } catch (error) {
@@ -61,14 +62,16 @@ const fetchMarkdownFromUrl = async (url: string) => {
   }
 };
 
-const NotionEditor: React.FC = () => {
+const NotionEditor = ({
+  initialMarkdownUrl,
+}: {
+  initialMarkdownUrl: string;
+}) => {
   const editor: YooEditor = useMemo(() => createYooptaEditor(), []);
   const [value, setValue] = useState<YooptaContentValue>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [markdownUrl, setMarkdownUrl] = useState<string>(
-    "https://paper-dev-test-magic-pdf-output.s3.ap-northeast-2.amazonaws.com/summaries/4452/767d59df-2316-4ce8-bf08-4d0c48dcb949.md"
-  );
+  const [markdownUrl, setMarkdownUrl] = useState<string>(initialMarkdownUrl);
   const selectionRef = useRef(null);
 
   const plugins = [
@@ -82,35 +85,37 @@ const NotionEditor: React.FC = () => {
     Blockquote,
     Code,
     File,
+    Image,
     Divider,
     Link,
     Callout,
     Table,
     Embed,
-    Image.extend({
-      elementProps: {
-        image: (props) => {
-          let src = props.src;
+    Image,
+    // .extend({
+    //   elementProps: {
+    //     image: (props) => {
+    //       let src = props.src;
 
-          // S3 이미지인 경우
-          if (src?.includes("s3.ap-northeast-2.amazonaws.com")) {
-            src = `/api/s3-proxy?url=${encodeURIComponent(src)}`;
-          }
+    //       // S3 이미지인 경우
+    //       if (src?.includes("s3.ap-northeast-2.amazonaws.com")) {
+    //         src = `/api/s3-proxy?url=${encodeURIComponent(src)}`;
+    //       }
 
-          // 기타 외부 이미지인 경우
-          else if (src?.startsWith("http")) {
-            src = `/api/image-proxy?url=${encodeURIComponent(src)}`;
-          }
+    //       // 기타 외부 이미지인 경우
+    //       else if (src?.startsWith("http")) {
+    //         src = `/api/image-proxy?url=${encodeURIComponent(src)}`;
+    //       }
 
-          return {
-            ...props,
-            src,
-            crossOrigin: "anonymous",
-            referrerPolicy: "no-referrer",
-          };
-        },
-      },
-    }),
+    //       return {
+    //         ...props,
+    //         src,
+    //         crossOrigin: "anonymous",
+    //         referrerPolicy: "no-referrer",
+    //       };
+    //     },
+    //   },
+    // }),
   ];
 
   // 텍스트 마크 스타일
@@ -189,14 +194,13 @@ const NotionEditor: React.FC = () => {
         plugins={plugins}
         marks={MARKS}
         tools={TOOLS}
-        //value={value}
         onChange={onChange}
         placeholder="/'를 입력하여 명령어를 확인하세요..."
         autoFocus={true}
         style={{
           width: "100%",
           maxWidth: "100%",
-          paddingBottom: "20px", // 원하는 값으로 조정
+          paddingBottom: "20px",
         }}
       />
     </div>

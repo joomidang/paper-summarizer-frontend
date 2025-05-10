@@ -2,14 +2,28 @@
 
 import React, { useState, KeyboardEvent } from "react";
 import ContentItem from "./ContentItem";
+import { apiUrl } from "@/app/(auth)/_components/Login";
+import { getCookie } from "@/app/utils/getCookie";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
-const ExtractedContent: React.FC = () => {
+interface ExtractedContentProps {
+  summaryId: string;
+  markdownContent?: string;
+}
+
+const ExtractedContent: React.FC<ExtractedContentProps> = ({
+  summaryId,
+  markdownContent = "",
+}) => {
   const [isPublic, setIsPublic] = useState(true);
   const [author, setAuthor] = useState("");
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>(["AI", "GPT"]);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const contentItems = [
     { type: "이미지" as const, number: 1, description: "Lorem Ipsum" },
@@ -34,6 +48,58 @@ const ExtractedContent: React.FC = () => {
 
   const removeTag = (indexToRemove: number) => {
     setTags(tags.filter((_, index) => index !== indexToRemove));
+  };
+
+  const publishSummary = async () => {
+    if (!title.trim()) {
+      toast.error("제목을 입력해주세요.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const requestBody = {
+        title: title.trim(),
+        brief: "이 논문은 어쩌고...",
+        markdownContent: markdownContent || "# 요약\n기본 내용입니다.",
+        tags: tags,
+      };
+
+      console.log("Publishing summary:", {
+        summaryId,
+        requestBody,
+      });
+
+      const response = await fetch(
+        `${apiUrl}/api/summaries/${summaryId}/publish`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getCookie("accessToken")}`,
+          },
+          credentials: "include",
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Published 요청 실패: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      console.log("Published successfully:", result);
+
+      toast.success("요약이 성공적으로 출판되었습니다!");
+    } catch (error) {
+      console.error("Publishing error:", error);
+      toast.error("출판 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -75,15 +141,16 @@ const ExtractedContent: React.FC = () => {
           <h2 className="text-lg font-bold mb-4">메타데이터</h2>
           <div className="mb-4">
             <label htmlFor="title" className="block text-sm font-medium mb-1">
-              제목
+              제목 <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               id="title"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
               placeholder="Lorem Ipsum is simply dummy text of the printing"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              required
             />
           </div>
           <div className="mb-4">
@@ -93,7 +160,7 @@ const ExtractedContent: React.FC = () => {
             <input
               type="text"
               id="author"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
               placeholder="구성재, 김기현, 선지원"
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
@@ -106,7 +173,7 @@ const ExtractedContent: React.FC = () => {
             <input
               type="text"
               id="date"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
               placeholder="2025. 04. 10."
               value={date}
               onChange={(e) => setDate(e.target.value)}
@@ -137,7 +204,7 @@ const ExtractedContent: React.FC = () => {
               </label>
             </div>
           </div>
-          <div className="mb-6 ">
+          <div className="mb-6">
             <label htmlFor="tags" className="block text-sm font-medium mb-1">
               태그
             </label>
@@ -175,8 +242,16 @@ const ExtractedContent: React.FC = () => {
               </div>
             </div>
           </div>
-          <button className="w-full py-2 bg-[#42598C] text-white rounded font-medium">
-            저장하기
+          <button
+            onClick={publishSummary}
+            disabled={isLoading}
+            className={`w-full py-2 rounded font-medium transition-colors ${
+              isLoading
+                ? "bg-gray-400 text-gray-100 cursor-not-allowed"
+                : "bg-[#42598C] text-white hover:bg-[#355174]"
+            }`}
+          >
+            {isLoading ? "출판 중..." : "저장하기"}
           </button>
         </div>
       </div>
