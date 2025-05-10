@@ -149,7 +149,7 @@ const NotionEditor = ({
       const titleItem = items.find((item) => item.meta?.order === 0);
 
       if (titleItem) {
-        console.log("제목 아이템:", titleItem);
+        //console.log("제목 아이템:", titleItem);
         const element = titleItem.value?.[0] as SlateElement;
         const firstChild = element.children?.[0];
         const title = firstChild && isText(firstChild) ? firstChild.text : "";
@@ -176,7 +176,7 @@ const NotionEditor = ({
     try {
       const mdContent = markdown.serialize(editor, newValue || {});
       setMarkdownContent(mdContent);
-      console.log("변경된 내용을 마크다운으로 변환하여 store에 저장");
+      //console.log("변경된 내용을 마크다운으로 변환하여 store에 저장");
 
       extractTitleFromYoopta(newValue);
     } catch (error) {
@@ -193,25 +193,25 @@ const NotionEditor = ({
         if (!markdownUrl) {
           throw new Error("마크다운 URL을 찾을 수 없습니다.");
         }
-        console.log("마크다운 URL:", markdownUrl);
+        //console.log("마크다운 URL:", markdownUrl);
 
         const markdownContent = await fetchMarkdownFromUrl(markdownUrl);
         if (!markdownContent) {
           throw new Error("마크다운 내용이 비어있습니다.");
         }
 
-        console.log(
-          "불러온 마크다운 내용:",
-          markdownContent.substring(0, 100) + "..."
-        );
+        // console.log(
+        //   "불러온 마크다운 내용:",
+        //   markdownContent.substring(0, 100) + "..."
+        // );
 
         const yooptaContent = markdown.deserialize(editor, markdownContent);
         setValue(yooptaContent);
-        console.log("에디터 값:", yooptaContent);
+        //console.log("에디터 값:", yooptaContent);
         editor.setEditorValue(yooptaContent);
 
         setMarkdownContent(markdownContent);
-        console.log("초기 마크다운을 store에 저장", markdownContent);
+        //console.log("초기 마크다운을 store에 저장", markdownContent);
 
         extractTitleFromYoopta(yooptaContent);
       } catch (err) {

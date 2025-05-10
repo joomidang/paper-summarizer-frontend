@@ -13,7 +13,7 @@ interface ExtractedContentProps {
 
 const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
   const [isPublic, setIsPublic] = useState(true);
-  const [author, setAuthor] = useState("");
+  //const [author, setAuthor] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { title, brief, markdownContent, tags, setTitle, setBrief, setTags } =
@@ -49,6 +49,68 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
 
   const removeTag = (indexToRemove: number) => {
     setTags(tags.filter((_, index) => index !== indexToRemove));
+  };
+
+  const saveDraftSummary = async () => {
+    if (!title.trim()) {
+      toast.error("제목을 입력해주세요.");
+      return;
+    }
+
+    if (!markdownContent.trim()) {
+      toast.error("마크다운 내용이 없습니다. 에디터에서 내용을 작성해주세요.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const requestBody = {
+        title: title.trim(),
+        brief: brief.trim() || "요약 내용이 비어있습니다.",
+        markdownContent: markdownContent,
+        tags: tags,
+      };
+
+      console.log("Saving draft:", {
+        summaryId,
+        requestBody: {
+          ...requestBody,
+          markdownContent:
+            requestBody.markdownContent.substring(0, 100) + "...",
+        },
+      });
+
+      console.log(typeof +summaryId);
+
+      const response = await fetch(
+        `${apiUrl}/api/summaries/${summaryId}/draft`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getCookie("accessToken")}`,
+          },
+          credentials: "include",
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `초안 저장 실패: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      console.log("Draft saved successfully:", result);
+      toast.success("요약이 임시 저장되었습니다.");
+    } catch (error) {
+      console.error("Draft saving error:", error);
+      toast.error("임시 저장 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const publishSummary = async () => {
@@ -102,10 +164,7 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
 
       const result = await response.json();
       console.log("Published successfully:", result);
-
-      toast.success("요약이 성공적으로 출판되었습니다!");
-
-      // 성공 후 리다이렉트 (필요에 따라 조정)
+      toast.success("요약이 성공적으로 출판되었습니다.");
       // router.push(`/papers/published/${summaryId}`);
     } catch (error) {
       console.error("Publishing error:", error);
@@ -166,7 +225,7 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
               required
             />
           </div>
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label htmlFor="author" className="block text-sm font-medium mb-1">
               저자
             </label>
@@ -178,7 +237,7 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
             />
-          </div>
+          </div> */}
           <div className="mb-4">
             <label htmlFor="brief" className="block text-sm font-medium mb-1">
               초록
@@ -255,17 +314,29 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
               </div>
             </div>
           </div>
-          <button
-            onClick={publishSummary}
-            disabled={isLoading}
-            className={`w-full py-2 rounded font-medium transition-colors ${
-              isLoading
-                ? "bg-gray-400 text-gray-100 cursor-not-allowed"
-                : "bg-[#42598C] text-white hover:bg-[#355174]"
-            }`}
-          >
-            {isLoading ? "출판 중..." : "저장하기"}
-          </button>
+          <div className="flex justify-between">
+            <button
+              onClick={saveDraftSummary}
+              className={`w-[47%] py-2 rounded font-medium transition-colors ${
+                isLoading
+                  ? "bg-gray-400 text-gray-100 cursor-not-allowed"
+                  : "bg-[#6b8fdc] text-white hover:bg-[#355174]"
+              }`}
+            >
+              임시저장
+            </button>
+            <button
+              onClick={publishSummary}
+              disabled={isLoading}
+              className={`w-[47%] py-2 rounded font-medium transition-colors ${
+                isLoading
+                  ? "bg-gray-400 text-gray-100 cursor-not-allowed"
+                  : "bg-[#42598C] text-white hover:bg-[#355174]"
+              }`}
+            >
+              {isLoading ? "출판 중..." : "발행하기"}
+            </button>
+          </div>
         </div>
       </div>
     </div>

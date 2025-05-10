@@ -110,7 +110,7 @@ const PaperEdit = ({ summaryId }: PaperEditProps) => {
 
   return (
     <div className="flex justify-center items-start pb-11 gap-4">
-      <div className="bg-white shadow-sm rounded-lg border border-gray-300 xl:w-[43.125rem] max-h-[50.938rem] overflow-y-auto">
+      <div className="bg-white shadow-sm rounded-lg border border-gray-300 xl:w-[43.125rem] max-h-[55.813rem] overflow-y-auto">
         <NotionEditor initialMarkdownUrl={markdownUrl} key={summaryId} />
       </div>
       <div>
