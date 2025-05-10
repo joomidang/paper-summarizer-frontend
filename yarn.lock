@@ -1540,6 +1540,11 @@
   resolved "https://registry.yarnpkg.com/@yoopta/blockquote/-/blockquote-4.9.7.tgz#5537e640106511bca67a6306afa58d4f00060736"
   integrity sha512-KW7rG2xAfv55ebQ0c1thgisDVw0LyuCQP5hSqaAcacM2ynifjdYaCnI+k+jEnPQF6pcOUE+wCtvpA8L/xM0KsA==
 
+"@yoopta/callout@^4.9.7":
+  version "4.9.7"
+  resolved "https://registry.yarnpkg.com/@yoopta/callout/-/callout-4.9.7.tgz#e7afe0588ca66f01142ca9de64dd0f808afbad7b"
+  integrity sha512-wwp5ORKv8ZTf4ceXW/dZFm1kT6vIccjsACKtyQZ5NXviLCXtBs+9tP6X0rchhZXqgCGLtHA0YlWIixqwaqieLA==
+
 "@yoopta/code@^4.9.7":
   version "4.9.7"
   resolved "https://registry.yarnpkg.com/@yoopta/code/-/code-4.9.7.tgz#f3a84635a89d53ef797ec90a55b0aa63f841f831"
@@ -1598,6 +1603,15 @@
     lodash.clonedeep "^4.5.0"
     validator "^13.12.0"
 
+"@yoopta/embed@^4.9.7":
+  version "4.9.7"
+  resolved "https://registry.yarnpkg.com/@yoopta/embed/-/embed-4.9.7.tgz#6ded01e110b9c347b426c6cd33915b036b46342f"
+  integrity sha512-F/2UEIL0g90lMj6nqGC5m2aaCp9ihgXBhcNp3M1LnCU2Ws6RxH3koL70n/5Cppmolmb7jt3lH6sh6rHCpy6BiQ==
+  dependencies:
+    "@floating-ui/react" "^0.26.9"
+    "@radix-ui/react-icons" "^1.3.0"
+    re-resizable "^6.9.11"
+
 "@yoopta/exports@^4.9.7":
   version "4.9.7"
   resolved "https://registry.yarnpkg.com/@yoopta/exports/-/exports-4.9.7.tgz#0d66ced6b00c8e60f622e7b30232468ade519c05"
@@ -1632,6 +1646,13 @@
   resolved "https://registry.yarnpkg.com/@yoopta/link-tool/-/link-tool-4.9.7.tgz#cbfbcb47389f17bb51449d182b9e8d30633414a1"
   integrity sha512-LR60oERcwlQm1Khriy1hOnBOg+mytGGm1dgTIrAsl0ereLNMFqexplP9qIc69j5Yq0Dx1weVNuzBimXC3hfj/g==
 
+"@yoopta/link@^4.9.7":
+  version "4.9.7"
+  resolved "https://registry.yarnpkg.com/@yoopta/link/-/link-4.9.7.tgz#7fe7fcf5481f77741e8c62340f317654345ee6af"
+  integrity sha512-wsnUDa1TWKpj5U/tNSx99gLCiMp5GnjWhuDpO39Ps1I6Mz6IohkSm1y4N3htxRPk5rSB5I5vG5iuyXxVQurE3w==
+  dependencies:
+    lucide-react "^0.379.0"
+
 "@yoopta/lists@^4.9.7":
   version "4.9.7"
   resolved "https://registry.yarnpkg.com/@yoopta/lists/-/lists-4.9.7.tgz#28b0bb81c7cae796375cec592e45bf4efab7ffc8"
@@ -1646,6 +1667,13 @@
   version "4.9.7"
   resolved "https://registry.yarnpkg.com/@yoopta/paragraph/-/paragraph-4.9.7.tgz#f6dc332d4a57a1a65bfb29c45775b907783b5f26"
   integrity sha512-k//ot0xxNMVKlz+RNFqd3rvez9lkqHnQLfF7cUOIK5oxjHfMMW7TYDiAd4+jyZerYUYMK9bdchMAiuqFG9O6jQ==
+
+"@yoopta/table@^4.9.7":
+  version "4.9.7"
+  resolved "https://registry.yarnpkg.com/@yoopta/table/-/table-4.9.7.tgz#60d69a6d4e5648b1dfae4c09b7b85d01d4e553b1"
+  integrity sha512-tuHSLrAiw9wrFRZLHugBh9H6lp59LZ2Ca4wt1kZEngua5ndNZRO4BhC/Io1kFhsAjdCQkt8q/vV0E3G38hiwkA==
+  dependencies:
+    lucide-react "^0.436.0"
 
 "@yoopta/toolbar@^4.9.7":
   version "4.9.7"
@@ -3315,6 +3343,16 @@ loose-envify@^1.4.0:
   integrity sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
+
+lucide-react@^0.379.0:
+  version "0.379.0"
+  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.379.0.tgz#29e34eeffae7fb241b64b09868cbe3ab888ef7cc"
+  integrity sha512-KcdeVPqmhRldldAAgptb8FjIunM2x2Zy26ZBh1RsEUcdLIvsEmbcw7KpzFYUy5BbpGeWhPu9Z9J5YXfStiXwhg==
+
+lucide-react@^0.436.0:
+  version "0.436.0"
+  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.436.0.tgz#020c75031fbba5e01f7188991fa5a50195098f50"
+  integrity sha512-N292bIxoqm1aObAg0MzFtvhYwgQE6qnIOWx/GLj5ONgcTPH6N0fD9bVq/GfdeC9ZORBXozt/XeEKDpiB3x3vlQ==
 
 lucide-react@^0.469.0:
   version "0.469.0"

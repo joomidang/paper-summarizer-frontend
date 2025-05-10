@@ -30,11 +30,13 @@ import { markdown } from "@yoopta/exports";
 
 const editorStyles: React.CSSProperties = {
   padding: "20px",
+  maxWidth: "100%",
   minHeight: "100vh",
   fontFamily: "pretendard",
   fontSize: "18px",
   lineHeight: "1.5",
   color: "#37352f",
+  overflowY: "auto",
 };
 
 const fetchMarkdownFromUrl = async (url: string) => {
@@ -161,6 +163,11 @@ const NotionEditor: React.FC = () => {
         onChange={onChange}
         placeholder="/'를 입력하여 명령어를 확인하세요..."
         autoFocus={true}
+        style={{
+          width: "100%",
+          maxWidth: "100%",
+          paddingBottom: "20px", // 원하는 값으로 조정
+        }}
       />
     </div>
   );

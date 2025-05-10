@@ -49,7 +49,7 @@ const PaperEdit = ({ summaryId }: PaperEditProps) => {
 
   return (
     <div className="flex justify-center items-start pb-11 gap-4">
-      <div className="bg-white shadow-sm rounded-lg border border-gray-300 xl:w-[43.125rem] min-h-[50.938rem]">
+      <div className="bg-white shadow-sm rounded-lg border border-gray-300 xl:w-[43.125rem] max-h-[50.938rem] overflow-y-auto">
         <NotionEditor />
       </div>
       <div>
