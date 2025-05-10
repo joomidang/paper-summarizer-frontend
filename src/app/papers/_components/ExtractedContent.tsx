@@ -175,7 +175,7 @@ const ExtractedContent: React.FC = () => {
               </div>
             </div>
           </div>
-          <button className="w-full py-2 bg-blue-700 text-white rounded font-medium">
+          <button className="w-full py-2 bg-[#42598C] text-white rounded font-medium">
             저장하기
           </button>
         </div>
