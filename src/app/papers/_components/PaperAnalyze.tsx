@@ -135,7 +135,7 @@ const PaperAnalyze = () => {
       console.error("EventSource readyState:", eventSource.readyState);
       setIsError(true);
       setStatusText("실시간 업데이트 연결이 끊어졌습니다.");
-      toast.error("연결이 끊어졌습니다");
+      //toast.error("연결이 끊어졌습니다");
       eventSource.close();
     };
 
