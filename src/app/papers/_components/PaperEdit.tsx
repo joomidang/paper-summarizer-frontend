@@ -5,6 +5,7 @@ import ExtractedContent from "./ExtractedContent";
 import { apiUrl } from "@/app/(auth)/_components/Login";
 import { getCookie } from "@/app/utils/getCookie";
 import { useFileStore } from "@/store/fileStore";
+import { useSummaryStore } from "@/store/summaryStore";
 
 interface PaperEditProps {
   summaryId: string;
@@ -21,6 +22,7 @@ const PaperEdit = ({ summaryId }: PaperEditProps) => {
   const [error, setError] = useState<string | null>(null);
   const hasRun = useRef(false);
   const { markdownUrl, setMarkdownUrl } = useFileStore();
+  const { setBrief, setTags } = useSummaryStore();
 
   console.log("summaryId:", summaryId);
 
@@ -51,6 +53,8 @@ const PaperEdit = ({ summaryId }: PaperEditProps) => {
         const result = await response.json();
         setSummaryData(result.data);
         setMarkdownUrl(result.data.markdownUrl);
+        setBrief(result.data.brief);
+        setTags(result.data.tags);
         console.log("요약 데이터 불러오기 성공:", result.data);
         console.log("markdownUrl:", result.data.markdownUrl);
       } catch (error) {
