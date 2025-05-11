@@ -1,8 +1,13 @@
+"use client";
+
 import React from "react";
 import PaperDetail from "../../_components/PaperDetail";
+import { useParams } from "next/navigation";
 
-const page = () => {
-  return <PaperDetail />;
+const Page = () => {
+  const params = useParams();
+  const summaryId = params.summaryId;
+  return <PaperDetail summaryId={summaryId as string} />;
 };
 
-export default page;
+export default Page;

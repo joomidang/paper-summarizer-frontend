@@ -6,6 +6,8 @@ import { apiUrl } from "@/app/(auth)/_components/Login";
 import { getCookie } from "@/app/utils/getCookie";
 import { toast } from "react-toastify";
 import { useSummaryStore } from "@/store/summaryStore";
+import { useRouter } from "next/navigation";
+import { useFileStore } from "@/store/fileStore";
 
 interface ExtractedContentProps {
   summaryId: string;
@@ -18,13 +20,15 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { title, brief, markdownContent, tags, setTitle, setBrief, setTags } =
     useSummaryStore();
+  const { setSummaryId } = useFileStore();
+  const router = useRouter();
 
-  console.log("ExtractedContent - store 상태:", {
-    title,
-    brief,
-    markdownContent: markdownContent.substring(0, 100) + "...",
-    tags,
-  });
+  // console.log("ExtractedContent - store 상태:", {
+  //   title,
+  //   brief,
+  //   markdownContent: markdownContent.substring(0, 100) + "...",
+  //   tags,
+  // });
 
   const contentItems = [
     { type: "이미지" as const, number: 1, description: "Lorem Ipsum" },
@@ -148,8 +152,8 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${getCookie("accessToken")}`,
+            "Content-Type": "application/json",
           },
           credentials: "include",
           body: JSON.stringify(requestBody),
@@ -165,7 +169,8 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
       const result = await response.json();
       console.log("Published successfully:", result);
       toast.success("요약이 성공적으로 출판되었습니다.");
-      // router.push(`/papers/published/${summaryId}`);
+      router.push(`/papers/published/success`);
+      setSummaryId(+summaryId);
     } catch (error) {
       console.error("Publishing error:", error);
       toast.error("출판 중 오류가 발생했습니다.");
