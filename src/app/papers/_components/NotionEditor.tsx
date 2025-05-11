@@ -155,7 +155,7 @@ const NotionEditor = ({
         const title = firstChild && isText(firstChild) ? firstChild.text : "";
 
         if (title) {
-          console.log("추출된 제목:", title);
+          //console.log("추출된 제목:", title);
           setTitle(title);
         }
       } else {
@@ -225,7 +225,7 @@ const NotionEditor = ({
   }, [editor, selectionRef, markdownUrl, setMarkdownContent]);
 
   useEffect(() => {
-    console.log("에디터 value 변경됨:", value);
+    //console.log("에디터 value 변경됨:", value);
   }, [value]);
 
   return (

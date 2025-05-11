@@ -7,6 +7,7 @@ interface ProgressBarProps {
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ progress, text }) => (
   <div className="xl:w-[80rem] w-[56.25rem] bg-[#AFBFDF] rounded-lg h-12 flex items-center px-6 mt-6 relative">
+    {/** TODO: 너비 변경 */}
     <div
       className="absolute left-0 top-0 h-full bg-[#3b5998] rounded-lg transition-all duration-200"
       style={{ width: `${progress}%`, zIndex: 1 }}
@@ -15,6 +16,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progress, text }) => (
     <div className="relative z-10 flex justify-between w-full items-center">
       <div className="flex items-center gap-2">
         <svg width="24" height="24" fill="#3b5998" viewBox="0 0 24 24">
+          {/** TODO: 로딩스피너로 변경 */}
           <circle cx="12" cy="12" r="10" fill="#ffffff" />
           <path
             d="M8 12.5l2.5 2.5 5-5"

@@ -171,6 +171,9 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
       toast.success("요약이 성공적으로 출판되었습니다.");
       router.push(`/papers/published/success`);
       setSummaryId(+summaryId);
+      setTitle("");
+      setBrief("");
+      setTags([]);
     } catch (error) {
       console.error("Publishing error:", error);
       toast.error("출판 중 오류가 발생했습니다.");
