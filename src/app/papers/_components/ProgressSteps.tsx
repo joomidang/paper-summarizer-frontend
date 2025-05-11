@@ -59,7 +59,7 @@ const ProgressSteps: React.FC<ProgressStepsProps> = ({
             {idx < steps.length - 1 && (
               <div
                 className={`flex-1 h-1 mx-2 rounded ${
-                  idx + 1 < currentStep ? "bg-blue-500" : "bg-gray-200"
+                  idx + 1 < currentStep ? "bg-[#42598C]" : "bg-gray-200"
                 }`}
                 style={{ minWidth: 32 }}
               />
