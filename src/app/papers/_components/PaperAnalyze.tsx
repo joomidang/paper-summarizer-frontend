@@ -6,6 +6,7 @@ import { useFileStore } from "@/store/fileStore";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { getCookie } from "@/app/utils/getCookie";
+import ProgressSteps from "./ProgressSteps";
 
 interface PaperEventData {
   summaryId?: string;
@@ -43,11 +44,11 @@ const PaperAnalyze = () => {
     const eventSource = new EventSource(eventUrl);
     eventSourceRef.current = eventSource;
 
-    // 모든 메시지 수신 확인 (디버깅용)
+    // 모든 메시지 수신 확인 (디버깅)
     eventSource.onmessage = (event) => {
       console.log("수신된 SSE 메시지:", event);
-      console.log("메시지 타입:", event.type);
-      console.log("메시지 데이터:", event.data);
+      // console.log("메시지 타입:", event.type);
+      // console.log("메시지 데이터:", event.data);
     };
 
     // 연결 성공 이벤트
@@ -247,6 +248,7 @@ const PaperAnalyze = () => {
 
   return (
     <div className="w-full max-w-md mx-auto">
+      <ProgressSteps progress={progress} statusText={statusText} />
       <ProgressBar progress={progress} text={statusText} />
 
       {/* 에러 발생 시 재시도 버튼 표시 */}

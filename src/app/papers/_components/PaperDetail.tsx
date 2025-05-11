@@ -6,7 +6,7 @@ import Summary from "./Summary";
 import CommentZone from "./CommentZone";
 
 const PaperDetail = ({ summaryId }: { summaryId: string }) => {
-  const [summaryData, setSummaryData] = useState<string | null>(null);
+  const [, setSummaryData] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const hasRun = useRef(false);
