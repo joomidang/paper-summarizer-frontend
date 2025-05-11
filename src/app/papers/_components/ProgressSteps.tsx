@@ -7,9 +7,9 @@ interface ProgressStepsProps {
 
 const steps = [
   { label: "텍스트 추출" },
-  { label: "GPT 요약" },
   { label: "표/그림 추출" },
-  { label: "스켈레톤트 생성" },
+  { label: "GPT 요약" },
+  { label: "스켈레톤 생성" },
   { label: "완료" },
 ];
 
@@ -28,7 +28,7 @@ const ProgressSteps: React.FC<ProgressStepsProps> = ({
   const currentStep = getCurrentStep(progress);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-8 mb-4 w-full max-w-2xl mx-auto">
+    <div className="xl:w-[80rem] w-[56.25rem] bg-white rounded-xl border border-gray-200 p-8 mb-4 mx-auto">
       <h2 className="text-xl font-bold mb-2">논문 분석중</h2>
       <div className="text-gray-500 mb-4">{statusText}</div>
       <div className="flex items-center mb-6">
@@ -38,9 +38,9 @@ const ProgressSteps: React.FC<ProgressStepsProps> = ({
               <div
                 className={`w-8 h-8 flex items-center justify-center rounded-full border-2 ${
                   idx + 1 < currentStep
-                    ? "bg-blue-500 border-blue-500 text-white"
+                    ? "bg-[#42598C] border-[#42598C] text-white"
                     : idx + 1 === currentStep
-                    ? "bg-white border-blue-500 text-blue-500"
+                    ? "bg-[#42598C] border-white text-white"
                     : "bg-white border-gray-300 text-gray-400"
                 } font-bold`}
               >
@@ -49,7 +49,7 @@ const ProgressSteps: React.FC<ProgressStepsProps> = ({
               <span
                 className={`mt-2 text-sm ${
                   idx + 1 <= currentStep
-                    ? "text-blue-700 font-semibold"
+                    ? "text-[#12398e] font-semibold"
                     : "text-gray-400"
                 }`}
               >
@@ -67,10 +67,10 @@ const ProgressSteps: React.FC<ProgressStepsProps> = ({
           </React.Fragment>
         ))}
       </div>
-      <div className="flex items-center justify-between bg-[#c9d7f5] text-[#42598C] rounded-lg px-6 py-3 font-medium">
+      {/* <div className="flex items-center justify-between bg-[#c9d7f5] text-[#42598C] rounded-lg px-6 py-3 font-medium">
         <span>{statusText}</span>
         <span>{progress}%</span>
-      </div>
+      </div> */}
     </div>
   );
 };

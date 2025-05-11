@@ -18,7 +18,7 @@ const PaperAnalyze = () => {
   const [statusText, setStatusText] = useState<string>(
     "논문의 표와 그림을 추출하여 시작하고 있습니다..."
   );
-  const [isError, setIsError] = useState<boolean>(false);
+  const [, setIsError] = useState<boolean>(false);
   const [, setIsLoading] = useState<boolean>(false);
   const { paperId } = useFileStore();
   const hasRequestedRef = useRef<boolean>(false);
@@ -26,7 +26,6 @@ const PaperAnalyze = () => {
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
   const { setSummaryId } = useFileStore();
-  //const { accessToken } = useAuthStore();
 
   // SSE 이벤트 구독
   const subscribeToEvents = (paperId: string) => {
@@ -58,7 +57,7 @@ const PaperAnalyze = () => {
       setIsError(false);
     });
 
-    // 파싱 시작 이벤트 (있을 수 있음)
+    // 파싱 시작 이벤트
     eventSource.addEventListener("parsing_started", (event) => {
       console.log("파싱 시작 이벤트:", event.data);
       setStatusText("논문 파싱이 시작되었습니다...");
@@ -83,7 +82,7 @@ const PaperAnalyze = () => {
       }
     });
 
-    // 요약 시작 이벤트 (있을 수 있음)
+    // 요약 시작 이벤트
     eventSource.addEventListener("summary_started", (event) => {
       console.log("요약 시작 이벤트:", event.data);
       setStatusText("요약 생성이 시작되었습니다...");
@@ -102,7 +101,6 @@ const PaperAnalyze = () => {
         setStatusText("요약이 완료되었습니다. 편집 페이지로 이동합니다...");
         setProgress(100);
 
-        // 진행률 애니메이션 정지
         if (progressIntervalRef.current) {
           clearInterval(progressIntervalRef.current);
           progressIntervalRef.current = null;
@@ -110,7 +108,6 @@ const PaperAnalyze = () => {
 
         toast.success("분석이 완료되었습니다");
 
-        // 잠시 후 편집 페이지로 이동
         setTimeout(() => {
           if (eventSourceRef.current) {
             eventSourceRef.current.close();
@@ -133,7 +130,6 @@ const PaperAnalyze = () => {
       }
     });
 
-    // 에러 핸들링
     eventSource.onerror = (error) => {
       console.error("SSE 연결 오류:", error);
       console.error("EventSource readyState:", eventSource.readyState);
@@ -143,7 +139,6 @@ const PaperAnalyze = () => {
       eventSource.close();
     };
 
-    // 초기 진행률 애니메이션 시작
     progressIntervalRef.current = setInterval(() => {
       setProgress((prev) => {
         if (prev < 75) return prev + 1;
@@ -200,25 +195,24 @@ const PaperAnalyze = () => {
     }
   };
 
-  // 연결 재시도 함수
-  const retryConnection = () => {
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-      eventSourceRef.current = null;
-    }
+  // 연결 재시도
+  // const retryConnection = () => {
+  //   if (eventSourceRef.current) {
+  //     eventSourceRef.current.close();
+  //     eventSourceRef.current = null;
+  //   }
 
-    if (progressIntervalRef.current) {
-      clearInterval(progressIntervalRef.current);
-      progressIntervalRef.current = null;
-    }
+  //   if (progressIntervalRef.current) {
+  //     clearInterval(progressIntervalRef.current);
+  //     progressIntervalRef.current = null;
+  //   }
 
-    setProgress(0);
-    setIsError(false);
-    setStatusText("다시 연결 중...");
+  //   setProgress(0);
+  //   setIsError(false);
+  //   setStatusText("다시 연결 중...");
 
-    // 분석 요청부터 다시 시작
-    handleAnalyzeAndSubscribe(paperId.toString());
-  };
+  //   handleAnalyzeAndSubscribe(paperId.toString());
+  // };
 
   useEffect(() => {
     if (hasRequestedRef.current) return;
@@ -227,17 +221,14 @@ const PaperAnalyze = () => {
     console.log("Analyzing with paperId:", paperId);
     handleAnalyzeAndSubscribe(paperId.toString());
 
-    // 클린업 함수
     return () => {
       console.log("Component unmounting");
 
-      // EventSource 연결 종료
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
         eventSourceRef.current = null;
       }
 
-      // 진행률 애니메이션 정지
       if (progressIntervalRef.current) {
         clearInterval(progressIntervalRef.current);
         progressIntervalRef.current = null;
@@ -247,12 +238,10 @@ const PaperAnalyze = () => {
   }, []);
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="flex flex-col items-center justify-center w-full mx-auto">
       <ProgressSteps progress={progress} statusText={statusText} />
       <ProgressBar progress={progress} text={statusText} />
-
-      {/* 에러 발생 시 재시도 버튼 표시 */}
-      {isError && (
+      {/* {isError && (
         <div className="mt-6 text-center">
           <button
             onClick={retryConnection}
@@ -261,7 +250,7 @@ const PaperAnalyze = () => {
             다시 시도
           </button>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

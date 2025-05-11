@@ -24,8 +24,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={pretendard.variable}>
-      <body className={`${pretendard.className} min-h-screen flex flex-col `}>
-        <div className="w-full h-[4.375rem] px-4 md:px-20 xl:px-[20rem] bg-[#1F325C] flex justify-between items-center">
+      <body className={`${pretendard.className} min-h-screen flex flex-col`}>
+        <div className="w-full h-[4.375rem] px-8 xl:px-[20rem] md:px-[5rem] bg-[#1F325C] flex justify-between items-center">
           <Link href={"/"}>
             <Image
               src="/images/논문한입title.png"
@@ -35,7 +35,7 @@ export default function RootLayout({
               priority
             />
           </Link>
-          <div className="flex items-center justify-start gap-[5rem] pr-4 md:pr-8 xl:pr-[20rem]">
+          <div className="flex items-center justify-start gap-[5rem] pr-8">
             <Link href={"/"}>
               <h1 className="text-[#fffef8] text-[1.125rem] font-semibold">
                 Home

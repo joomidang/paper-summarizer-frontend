@@ -23,12 +23,12 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
   const { setSummaryId } = useFileStore();
   const router = useRouter();
 
-  console.log("ExtractedContent - store 상태:", {
-    title,
-    brief,
-    markdownContent: markdownContent.substring(0, 100) + "...",
-    tags,
-  });
+  // console.log("ExtractedContent - store 상태:", {
+  //   title,
+  //   brief,
+  //   markdownContent: markdownContent.substring(0, 100) + "...",
+  //   tags,
+  // });
 
   const contentItems = [
     { type: "이미지" as const, number: 1, description: "Lorem Ipsum" },
