@@ -2,24 +2,11 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { apiUrl } from "./Login";
-//import { useAuthStore } from "@/store/authStore";
 
 const AuthCallback = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string>("");
-  //const { setAccessToken } = useAuthStore();
-
-  //   const getTokenFromCookie = (cookieName: string): string | null => {
-  //     const cookies = document.cookie.split(";");
-  //     for (let cookie of cookies) {
-  //       const [name, value] = cookie.trim().split("=");
-  //       if (name === cookieName) {
-  //         return decodeURIComponent(value);
-  //       }
-  //     }
-  //     return null;
-  //   };
 
   useEffect(() => {
     const handleAuthCallback = async () => {

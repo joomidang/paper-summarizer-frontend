@@ -6,10 +6,12 @@ interface FileState {
   paperId: number;
   summaryId: number;
   markdownUrl: string;
+  isPublished: boolean;
   setFile: (file: File | null) => void;
   setPaperId: (paperId: number) => void;
   setSummaryId: (summaryId: number) => void;
   setMarkdownUrl: (markdownUrl: string) => void;
+  setIsPublished: (isPublished: boolean) => void;
 }
 
 export const useFileStore = create<FileState>()(
@@ -19,10 +21,12 @@ export const useFileStore = create<FileState>()(
       paperId: 0,
       summaryId: 0,
       markdownUrl: "",
+      isPublished: false,
       setFile: (file) => set({ file }),
       setPaperId: (paperId) => set({ paperId }),
       setSummaryId: (summaryId) => set({ summaryId }),
       setMarkdownUrl: (markdownUrl) => set({ markdownUrl }),
+      setIsPublished: (isPublished) => set({ isPublished }),
     }),
     {
       name: "paper-storage",
@@ -31,6 +35,7 @@ export const useFileStore = create<FileState>()(
         paperId: state.paperId,
         summaryId: state.summaryId,
         markdownUrl: state.markdownUrl,
+        isPublished: state.isPublished,
       }),
     }
   )
