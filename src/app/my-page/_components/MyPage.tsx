@@ -5,18 +5,39 @@ import React, { useState, useEffect } from "react";
 import { getCookie } from "@/app/utils/getCookie";
 
 const MyPage = () => {
+  const [summaries, setSummaries] = useState([]);
   const { userInfo, updateInterests } = useUserInfoStore();
   const [isClicked, setIsClicked] = useState<
     "summary" | "like" | "comment" | "interest"
   >("summary");
 
   useEffect(() => {
+    const accessToken = getCookie("accessToken");
+
+    const fetchSummaries = async () => {
+      try {
+        const res = await fetch("/api/users/me/summaries", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("요약본 불러오기 실패");
+        const response = await res.json();
+        console.log("요약본 데이터:", response.data);
+        setSummaries(response.data.summaries);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
     const fetchInterests = async () => {
       try {
         const res = await fetch("/api/users/me/interests", {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${getCookie("accessToken")}`,
+            Authorization: `Bearer ${accessToken}`,
           },
           credentials: "include",
         });
@@ -27,6 +48,8 @@ const MyPage = () => {
         console.error(err);
       }
     };
+
+    fetchSummaries();
     fetchInterests();
   }, [updateInterests]);
 
@@ -60,7 +83,7 @@ const MyPage = () => {
             }`}
             onClick={() => setIsClicked("summary")}
           >
-            내 요약
+            내 요약본
           </button>
           <button
             className={`px-6 py-3 font-semibold ${
@@ -98,32 +121,33 @@ const MyPage = () => {
       {isClicked === "summary" && (
         <>
           <div className="max-w-4xl mx-auto grid grid-cols-2 gap-6 mt-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="bg-white rounded-xl shadow p-6 flex flex-col gap-2"
-              >
-                <div className="flex gap-2 mb-2">
-                  <span className="bg-[#E6EFFF] text-[#1A2747] text-xs px-2 py-1 rounded">
-                    AI
-                  </span>
-                  <span className="bg-[#E6EFFF] text-[#1A2747] text-xs px-2 py-1 rounded">
-                    GPT
-                  </span>
-                </div>
-                <div className="font-semibold text-base">
-                  GPT를 활용한 AI 논문 요약 및 시각화 플랫폼 개발
-                </div>
-                <div className="text-gray-400 text-xs">논문한입</div>
-                <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
-                  <div className="flex gap-4">
-                    <span>12</span>
-                    <span>3</span>
+            {summaries &&
+              summaries.map((i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-xl shadow p-6 flex flex-col gap-2"
+                >
+                  <div className="flex gap-2 mb-2">
+                    <span className="bg-[#E6EFFF] text-[#1A2747] text-xs px-2 py-1 rounded">
+                      AI
+                    </span>
+                    <span className="bg-[#E6EFFF] text-[#1A2747] text-xs px-2 py-1 rounded">
+                      GPT
+                    </span>
                   </div>
-                  <span>Posted by {userInfo?.username}</span>
+                  <div className="font-semibold text-base">
+                    GPT를 활용한 AI 논문 요약 및 시각화 플랫폼 개발
+                  </div>
+                  <div className="text-gray-400 text-xs">논문한입</div>
+                  <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+                    <div className="flex gap-4">
+                      <span>12</span>
+                      <span>3</span>
+                    </div>
+                    <span>Posted by {userInfo?.username}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
           <div className="max-w-4xl mx-auto flex justify-center mt-8 mb-12">
             <div className="flex gap-4 text-gray-500">

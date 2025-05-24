@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, KeyboardEvent } from "react";
+import React, { useState, KeyboardEvent, useCallback } from "react";
 import ContentItem from "./ContentItem";
 import { apiUrl } from "@/app/(auth)/_components/Login";
 import { getCookie } from "@/app/utils/getCookie";
@@ -36,6 +36,13 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
     { type: "이미지" as const, number: 2, description: "Lorem Ipsum" },
     { type: "표" as const, number: 2, description: "Lorem Ipsum" },
   ];
+
+  const handleBriefChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setBrief(e.target.value);
+    },
+    [setBrief]
+  );
 
   const handleTagKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && tagInput.trim() !== "") {
@@ -134,6 +141,7 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
       const requestBody = {
         title: title.trim(),
         brief: brief.trim() || "요약 내용이 비어있습니다.",
+        status: isPublic ? "PUBLISHED" : "PRIVATE",
         markdownContent: markdownContent,
         tags: tags,
       };
@@ -256,7 +264,7 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
               placeholder="이 논문은 ···"
               value={brief || ""}
-              onChange={(e) => setBrief(e.target.value)}
+              onChange={handleBriefChange}
             />
           </div>
           <div className="mb-4">
