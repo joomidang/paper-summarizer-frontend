@@ -40,12 +40,13 @@ export const useUserInfoStore = create<UserInfoState>()(
             : { username: "", profileImageUrl, interests: [] },
         })),
 
-      updateInterests: (interests) =>
+      updateInterests: (interests) => {
         set((state) => ({
           userInfo: state.userInfo
             ? { ...state.userInfo, interests }
             : { username: "", profileImageUrl: "", interests },
-        })),
+        }));
+      },
 
       addInterest: (interest) =>
         set((state) => {
