@@ -5,6 +5,10 @@
   --foreground: #171717;
 }
 
+/* ::-webkit-scrollbar {
+  display: none;
+} */
+
 @font-face {
   font-family: "HakgyoansimMulgyeol";
   src: url("/fonts/HakgyoansimMulgyeolB.ttf") format("truetype");

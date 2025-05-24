@@ -93,7 +93,7 @@ const PaperUpload = () => {
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-[#fcfbf6] py-12">
       <div
-        className={`xl:w-[80rem] w-[56.25rem] min-h-[25rem] flex flex-col justify-center items-center p-12 border-2 border-dashed rounded-xl transition-colors bg-transparent ${
+        className={`xl:w-[80rem] w-[56.25rem] min-h-[25rem] bg-white flex flex-col justify-center items-center p-12 border-2 border-dashed rounded-xl transition-colors ${
           isDragging ? "border-blue-400 bg-blue-50" : "border-gray-300"
         }`}
         onDragOver={handleDragOver}
@@ -135,7 +135,6 @@ const PaperUpload = () => {
           </span>
         </div>
       )}
-      {/* TODO: 스타일 수정 필요 */}
       <button
         className={`xl:w-[80rem] w-[56.25rem] mt-8 px-6 py-3 rounded-lg text-lg font-semibold transition-colors ${
           file

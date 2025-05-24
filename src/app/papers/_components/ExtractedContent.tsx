@@ -255,7 +255,7 @@ const ExtractedContent: React.FC<ExtractedContentProps> = ({ summaryId }) => {
               rows={3}
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
               placeholder="이 논문은 ···"
-              value={brief}
+              value={brief || ""}
               onChange={(e) => setBrief(e.target.value)}
             />
           </div>
