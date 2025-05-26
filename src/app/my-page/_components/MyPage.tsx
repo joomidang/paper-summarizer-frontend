@@ -3,6 +3,8 @@
 import { useUserInfoStore } from "@/store/userInfoStore";
 import React, { useState, useEffect } from "react";
 import { getCookie } from "@/app/utils/getCookie";
+import { apiUrl } from "@/app/(auth)/_components/Login";
+import Image from "next/image";
 
 const MyPage = () => {
   const [summaries, setSummaries] = useState([]);
@@ -16,7 +18,7 @@ const MyPage = () => {
 
     const fetchSummaries = async () => {
       try {
-        const res = await fetch("/api/users/me/summaries", {
+        const res = await fetch(`${apiUrl}/api/users/me/summaries`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -26,7 +28,7 @@ const MyPage = () => {
         if (!res.ok) throw new Error("요약본 불러오기 실패");
         const response = await res.json();
         console.log("요약본 데이터:", response.data);
-        setSummaries(response.data.summaries);
+        setSummaries(response.data.content);
       } catch (err) {
         console.error(err);
       }
@@ -34,7 +36,7 @@ const MyPage = () => {
 
     const fetchInterests = async () => {
       try {
-        const res = await fetch("/api/users/me/interests", {
+        const res = await fetch(`${apiUrl}/api/users/me/interests`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -57,7 +59,13 @@ const MyPage = () => {
     <div className="min-h-screen bg-[#FCFBF7]">
       <div className="max-w-4xl mx-auto mt-8 bg-white rounded-xl shadow p-8 flex flex-col gap-4">
         <div className="flex items-center gap-6">
-          <div className="w-24 h-24 rounded-full bg-gray-200 flex-shrink-0" />
+          <Image
+            src={userInfo?.profileImageUrl || "/images/default-profile.png"}
+            alt="profile"
+            width={96}
+            height={96}
+            className="rounded-full flex-shrink-0"
+          />
           <div>
             <div className="text-xl font-bold">{userInfo?.username}</div>
             <div className="text-gray-500 text-sm">loremipsumloremipsum</div>
@@ -141,7 +149,7 @@ const MyPage = () => {
                   <div className="text-gray-400 text-xs">논문한입</div>
                   <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
                     <div className="flex gap-4">
-                      <span>12</span>
+                      <span>{}</span>
                       <span>3</span>
                     </div>
                     <span>Posted by {userInfo?.username}</span>

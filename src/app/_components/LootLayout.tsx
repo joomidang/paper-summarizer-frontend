@@ -55,9 +55,32 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { getCookie } from "@/app/utils/getCookie";
+import { apiUrl } from "../(auth)/_components/Login";
 
 const LootLayout = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogoutBtn = async () => {
+    try {
+      const res = await fetch(`${apiUrl}/api/auth/withdraw`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${getCookie("accessToken")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          //TODO: OAuth 서버로부터 발급받은 코드?
+          authorizationCode: "",
+        }),
+      });
+      if (!res.ok) throw new Error("로그아웃 실패");
+      const response = await res.json();
+      console.log(response);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     const accessToken = getCookie("accessToken");
@@ -99,7 +122,10 @@ const LootLayout = () => {
             </h1>
           </Link>
         ) : (
-          <button className="text-[#fffef8] text-[1.125rem] font-semibold">
+          <button
+            onClick={handleLogoutBtn}
+            className="text-[#fffef8] text-[1.125rem] font-semibold"
+          >
             Logout
           </button>
         )}
