@@ -5,6 +5,7 @@ import ExtractedContent from "./ExtractedContent";
 import { apiUrl } from "@/app/(auth)/_components/Login";
 import { getCookie } from "@/app/utils/getCookie";
 import { useFileStore } from "@/store/fileStore";
+import { useSummaryStore } from "@/store/summaryStore";
 
 interface PaperEditProps {
   summaryId: string;
@@ -21,11 +22,54 @@ const PaperEdit = ({ summaryId }: PaperEditProps) => {
   const [error, setError] = useState<string | null>(null);
   const hasRun = useRef(false);
   const { markdownUrl, setMarkdownUrl } = useFileStore();
+  //const { setBrief, setTags } = useSummaryStore();
 
   console.log("summaryId:", summaryId);
 
+  // useEffect(() => {
+  //   // 이미 실행된 경우 중복 실행 방지
+  //   if (hasRun.current) return;
+
+  //   const fetchSummaryData = async (summaryId: string) => {
+  //     try {
+  //       setLoading(true);
+  //       setError(null);
+
+  //       const response = await fetch(
+  //         `${apiUrl}/api/summaries/${summaryId}/edit`,
+  //         {
+  //           method: "GET",
+  //           headers: {
+  //             Authorization: `Bearer ${getCookie("accessToken")}`,
+  //           },
+  //           credentials: "include",
+  //         }
+  //       );
+
+  //       if (!response.ok) {
+  //         throw new Error(`HTTP error! Status: ${response.status}`);
+  //       }
+
+  //       const result = await response.json();
+  //       setSummaryData(result.data);
+  //       setMarkdownUrl(result.data.markdownUrl);
+  //       if (result.data.brief) setBrief(result.data.brief);
+  //       if (result.data.tags) setTags(result.data.tags);
+  //       console.log("요약 데이터 불러오기 성공:", result.data);
+  //       console.log("markdownUrl:", result.data.markdownUrl);
+  //     } catch (error) {
+  //       console.error("요약 수정 데이터 가져오기 실패: ", error);
+  //       setError("데이터를 불러오는 중 오류가 발생했습니다.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   hasRun.current = true;
+  //   fetchSummaryData(summaryId);
+  // }, [summaryId]);
+
   useEffect(() => {
-    // 이미 실행된 경우 중복 실행 방지
     if (hasRun.current) return;
 
     const fetchSummaryData = async (summaryId: string) => {
@@ -49,10 +93,14 @@ const PaperEdit = ({ summaryId }: PaperEditProps) => {
         }
 
         const result = await response.json();
+
         setSummaryData(result.data);
         setMarkdownUrl(result.data.markdownUrl);
+        const { setBrief, setTags } = useSummaryStore.getState();
+        if (result.data.brief) setBrief(result.data.brief);
+        if (result.data.tags) setTags(result.data.tags);
+
         console.log("요약 데이터 불러오기 성공:", result.data);
-        console.log("markdownUrl:", result.data.markdownUrl);
       } catch (error) {
         console.error("요약 수정 데이터 가져오기 실패: ", error);
         setError("데이터를 불러오는 중 오류가 발생했습니다.");
@@ -63,7 +111,8 @@ const PaperEdit = ({ summaryId }: PaperEditProps) => {
 
     hasRun.current = true;
     fetchSummaryData(summaryId);
-  }, [summaryId]);
+    // eslint-disable-next-line
+  }, []);
 
   // 로딩 상태
   if (loading) {

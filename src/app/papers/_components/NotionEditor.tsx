@@ -155,7 +155,7 @@ const NotionEditor = ({
         const title = firstChild && isText(firstChild) ? firstChild.text : "";
 
         if (title) {
-          console.log("추출된 제목:", title);
+          //console.log("추출된 제목:", title);
           setTitle(title);
         }
       } else {
@@ -195,7 +195,10 @@ const NotionEditor = ({
         }
         //console.log("마크다운 URL:", markdownUrl);
 
-        const markdownContent = await fetchMarkdownFromUrl(markdownUrl);
+        //const markdownContent = await fetchMarkdownFromUrl(markdownUrl);
+        const markdownContent = await fetchMarkdownFromUrl(
+          "https://paper-dev-test-magic-pdf-output.s3.ap-northeast-2.amazonaws.com/summaries/4452/2a3fawdf-2316-4ce8-bf08-4d0c48dcb949.md"
+        );
         if (!markdownContent) {
           throw new Error("마크다운 내용이 비어있습니다.");
         }
@@ -207,11 +210,11 @@ const NotionEditor = ({
 
         const yooptaContent = markdown.deserialize(editor, markdownContent);
         setValue(yooptaContent);
-        //console.log("에디터 값:", yooptaContent);
         editor.setEditorValue(yooptaContent);
 
         setMarkdownContent(markdownContent);
-        //console.log("초기 마크다운을 store에 저장", markdownContent);
+        console.log("초기 마크다운을 store에 저장", markdownContent);
+        console.log("에디터 값:", yooptaContent);
 
         extractTitleFromYoopta(yooptaContent);
       } catch (err) {
@@ -225,7 +228,7 @@ const NotionEditor = ({
   }, [editor, selectionRef, markdownUrl, setMarkdownContent]);
 
   useEffect(() => {
-    console.log("에디터 value 변경됨:", value);
+    //console.log("에디터 value 변경됨:", value);
   }, [value]);
 
   return (
