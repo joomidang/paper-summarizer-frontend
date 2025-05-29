@@ -37,8 +37,8 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
         const result = await response.json();
         setSummaryData(result.data);
         setMarkdownUrl(result.data.markdownUrl);
-        console.log("요약본 불러오기 성공:", result.data);
-        console.log("markdownUrl:", result.data.markdownUrl);
+        //console.log("요약본 불러오기 성공:", result.data);
+        //console.log("markdownUrl:", result.data.markdownUrl);
       } catch (error) {
         console.error("요약본 데이터 가져오기 실패: ", error);
         setError("데이터를 불러오는 중 오류가 발생했습니다.");
@@ -53,7 +53,11 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
 
   // 로딩 중이거나 markdownUrl이 아직 없을 때
   if (loading || !markdownUrl) {
-    return <div>데이터를 불러오는 중...</div>;
+    return (
+      <div className="flex justify-center items-center">
+        논문 요약본을 불러오는 중...
+      </div>
+    );
   }
 
   if (error) {
@@ -66,7 +70,7 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
         <Summary initialMarkdownUrl={markdownUrl} />
       </div>
       <div>
-        <CommentZone />
+        <CommentZone summaryId={summaryId} />
       </div>
     </div>
   );

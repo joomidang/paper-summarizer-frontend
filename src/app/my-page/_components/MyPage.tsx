@@ -5,8 +5,20 @@ import React, { useState, useEffect } from "react";
 import { getCookie } from "@/app/utils/getCookie";
 import { apiUrl } from "@/app/(auth)/_components/Login";
 import Image from "next/image";
+import { formatDateTime } from "@/app/utils/formatDateTime";
+import { useRouter } from "next/navigation";
+
+interface Summary {
+  commentCount: number;
+  createdAt: string;
+  likes: number;
+  public: boolean;
+  summaryId: number;
+  title: string;
+}
 
 const MyPage = () => {
+  const router = useRouter();
   const [summaries, setSummaries] = useState([]);
   const { userInfo, updateInterests } = useUserInfoStore();
   const [isClicked, setIsClicked] = useState<
@@ -130,29 +142,32 @@ const MyPage = () => {
         <>
           <div className="max-w-4xl mx-auto grid grid-cols-2 gap-6 mt-6">
             {summaries &&
-              summaries.map((i) => (
+              summaries.map((i: Summary) => (
                 <div
-                  key={i}
+                  key={i.summaryId}
                   className="bg-white rounded-xl shadow p-6 flex flex-col gap-2"
+                  onClick={() => {
+                    router.push(`/papers/published/${i.summaryId}`);
+                  }}
                 >
-                  <div className="flex gap-2 mb-2">
+                  {/* <div className="flex gap-2 mb-2">
                     <span className="bg-[#E6EFFF] text-[#1A2747] text-xs px-2 py-1 rounded">
                       AI
                     </span>
                     <span className="bg-[#E6EFFF] text-[#1A2747] text-xs px-2 py-1 rounded">
                       GPT
                     </span>
+                  </div> */}
+                  <div className="font-semibold text-base">{i?.title}</div>
+                  <div className="text-gray-400 text-xs">
+                    {formatDateTime(i?.createdAt)}
                   </div>
-                  <div className="font-semibold text-base">
-                    GPT를 활용한 AI 논문 요약 및 시각화 플랫폼 개발
-                  </div>
-                  <div className="text-gray-400 text-xs">논문한입</div>
                   <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
                     <div className="flex gap-4">
-                      <span>{}</span>
-                      <span>3</span>
+                      <span>💬 {i?.commentCount}</span>
+                      <span>♥️ {i?.likes}</span>
                     </div>
-                    <span>Posted by {userInfo?.username}</span>
+                    <span>Posted by Me</span>
                   </div>
                 </div>
               ))}

@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.77.2",
+    "@tanstack/react-query-devtools": "^5.77.2",
     "@types/js-cookie": "^3.0.6",
     "@yoopta/action-menu-list": "^4.9.7",
     "@yoopta/blockquote": "^4.9.7",

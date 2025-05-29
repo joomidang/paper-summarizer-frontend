@@ -195,6 +195,8 @@ const PaperAnalyze = () => {
     }
   };
 
+  const handleAnalyzingStop = () => {};
+
   // 연결 재시도
   // const retryConnection = () => {
   //   if (eventSourceRef.current) {
@@ -251,6 +253,7 @@ const PaperAnalyze = () => {
           </button>
         </div>
       )} */}
+      <button onClick={handleAnalyzingStop}>중단하기</button>
     </div>
   );
 };
