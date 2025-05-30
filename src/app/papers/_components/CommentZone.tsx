@@ -6,9 +6,7 @@ import { getCookie } from "@/app/utils/getCookie";
 import { apiUrl } from "@/app/(auth)/_components/Login";
 import Image from "next/image";
 import { toast } from "react-toastify";
-//import { formatTime } from "@/app/utils/formatDateTime";
 import { useUserInfo } from "@/hooks/useUserData";
-//import { UserInfo } from "@/types/userInfoType";
 import CommentItem from "./CommentItem";
 
 interface CommentZoneProps {
@@ -30,7 +28,6 @@ export interface Comment {
   children: Comment[];
 }
 
-// 댓글 목록 조회 API
 const fetchComments = async (summaryId: string): Promise<Comment[]> => {
   const response = await fetch(
     `${apiUrl}/api/summaries/${summaryId}/comments`,
@@ -59,7 +56,6 @@ const fetchComments = async (summaryId: string): Promise<Comment[]> => {
   }
 };
 
-// 일반 댓글 작성 API
 const createComment = async ({
   summaryId,
   content,
@@ -87,7 +83,6 @@ const createComment = async ({
   return response.json();
 };
 
-// 대댓글 작성 API
 const createReply = async ({
   summaryId,
   commentId,
@@ -117,7 +112,6 @@ const createReply = async ({
   return response.json();
 };
 
-//댓글 수정 API
 const updateComment = async ({
   commentId,
   content,
@@ -140,7 +134,6 @@ const updateComment = async ({
   }
 };
 
-// 댓글 삭제 API
 const deleteComment = async ({
   commentId,
 }: {
@@ -161,6 +154,7 @@ const deleteComment = async ({
 };
 
 const CommentZone = ({ summaryId }: CommentZoneProps) => {
+  const queryClient = useQueryClient();
   const { data: userInfo } = useUserInfo();
   const [comment, setComment] = useState<string>("");
   const [replyTo, setReplyTo] = useState<{
@@ -168,9 +162,7 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
     name: string;
     content: string;
   } | null>(null);
-  const queryClient = useQueryClient();
 
-  // 댓글 목록 조회
   const {
     data: comments = [],
     isLoading,
@@ -239,14 +231,12 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
     if (!comment.trim()) return;
 
     if (replyTo) {
-      // 대댓글 작성
       createReplyMutation.mutate({
         summaryId,
         commentId: replyTo.id,
         content: comment.trim(),
       });
     } else {
-      // 일반 댓글 작성
       createCommentMutation.mutate({
         summaryId,
         content: comment.trim(),
@@ -291,7 +281,6 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
     }
   };
 
-  // 전체 댓글 개수 계산 (대댓글 포함)
   const getTotalCommentCount = (comments: Comment[]): number => {
     return comments.reduce((total, comment) => {
       return (
@@ -316,12 +305,15 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
     <div className="max-h-screen w-[35.625rem] ">
       <div className="w-[35.625rem] max-h-screen min-h-[44rem] bg-white rounded-lg border border-gray-300 p-4 mb-4 shadow-sm flex flex-col justify-between">
         <div className="flex flex-col">
-          <div className="font-bold text-lg mb-4">
-            {isLoading
-              ? "로딩 중..."
-              : `${
-                  Array.isArray(comments) ? getTotalCommentCount(comments) : 0
-                }개의 댓글`}
+          <div>
+            <div>토글 하트버튼</div>
+            <div className="font-bold text-lg mb-4">
+              {isLoading
+                ? "로딩 중..."
+                : `${
+                    Array.isArray(comments) ? getTotalCommentCount(comments) : 0
+                  }개의 댓글`}
+            </div>
           </div>
 
           <div className="space-y-6">
@@ -352,14 +344,14 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
         </div>
       </div>
       <div className="flex flex-col gap-3 mt-2">
-        {/* 답글 작성 중일 때 원본 댓글 표시 */}
+        {/* 대댓글 작성 중일 때 원본 댓글 표시 */}
         {replyTo && (
           <div className="bg-gray-50 border-l-4 border-blue-400 p-4 rounded">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-blue-600 font-medium text-sm">
-                    {replyTo.name}님의 댓글에 답글 작성 중
+                    {replyTo.name}님의 댓글에 답글 작성중...
                   </span>
                 </div>
                 <div className="bg-white p-3 rounded border text-gray-700 text-sm">
@@ -396,7 +388,7 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
               type="text"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyPress}
               placeholder={
                 replyTo ? `${replyTo.name}님에게 답글...` : "댓글을 입력하세요"
               }

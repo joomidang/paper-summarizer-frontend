@@ -5,8 +5,6 @@ import { useUserInfoStore } from "@/store/userInfoStore";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-const accessTokenFromCookie = getCookie("accessToken");
-
 const Home = () => {
   const { setAccessToken } = useAuthStore();
   const router = useRouter();
@@ -15,6 +13,7 @@ const Home = () => {
   const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
+    const accessTokenFromCookie = getCookie("accessToken");
     if (accessTokenFromCookie) {
       setAccessToken(accessTokenFromCookie);
     } else {
