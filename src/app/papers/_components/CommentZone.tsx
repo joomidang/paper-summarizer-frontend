@@ -306,7 +306,7 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
       <div className="w-[35.625rem] max-h-screen min-h-[44rem] bg-white rounded-lg border border-gray-300 p-4 mb-4 shadow-sm flex flex-col justify-between">
         <div className="flex flex-col">
           <div>
-            <div>토글 하트버튼</div>
+            {/* <div>토글 하트버튼</div> */}
             <div className="font-bold text-lg mb-4">
               {isLoading
                 ? "로딩 중..."
@@ -346,11 +346,11 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
       <div className="flex flex-col gap-3 mt-2">
         {/* 대댓글 작성 중일 때 원본 댓글 표시 */}
         {replyTo && (
-          <div className="bg-gray-50 border-l-4 border-blue-400 p-4 rounded">
+          <div className="bg-gray-50 border-l-4 border-[#42598C] p-4 rounded">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-blue-600 font-medium text-sm">
+                  <span className="text-[#12398e] font-medium text-sm">
                     {replyTo.name}님의 댓글에 답글 작성중...
                   </span>
                 </div>
@@ -395,7 +395,7 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
               disabled={
                 createCommentMutation.isPending || createReplyMutation.isPending
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#42598C] focus:border-transparent transition-all disabled:opacity-50"
             />
             <button
               onClick={handleCommentSubmit}
@@ -404,7 +404,7 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
                 createCommentMutation.isPending ||
                 createReplyMutation.isPending
               }
-              className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+              className="px-6 py-2 bg-[#42598C] text-white rounded-lg hover:bg-[#304268] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
             >
               {createCommentMutation.isPending || createReplyMutation.isPending
                 ? "작성 중..."
