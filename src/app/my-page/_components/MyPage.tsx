@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
-  useUserComments,
+  //useUserComments,
   useUserInfo,
   useUserInterests,
   useUserLikes,
@@ -23,7 +23,7 @@ const MyPage = () => {
   const { data: interests, isLoading: interestsLoading } = useUserInterests();
   const { data: summaries, isLoading: summariesLoading } = useUserSummaries();
   const { data: likes, isLoading: likesLoading } = useUserLikes();
-  const { data: comments, isLoading: commentsLoading } = useUserComments();
+  //const { data: comments, isLoading: commentsLoading } = useUserComments();
 
   const [isClicked, setIsClicked] = useState<
     "summary" | "like" | "comment" | "interest"
@@ -179,9 +179,9 @@ const MyPage = () => {
         <div className="max-w-4xl mx-auto mt-8">
           {likesLoading ? (
             <div className="text-center">좋아요를 불러오는 중...</div>
-          ) : likes && likes.length > 0 ? (
+          ) : likes && likes.likes.length > 0 ? (
             <div className="grid grid-cols-2 gap-6">
-              {likes.map((like: Summary) => (
+              {likes.likes.map((like: Summary) => (
                 <MyLikes key={like.summaryId} summary={like} />
               ))}
             </div>

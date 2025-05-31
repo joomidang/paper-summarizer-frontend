@@ -45,7 +45,7 @@ const Home = () => {
           !userInfo.profileImageUrl &&
           userInfo.interests.length === 0)
       ) {
-        router.push("/sign-up");
+        router.push("/login");
         return;
       }
       setIsChecking(false);
