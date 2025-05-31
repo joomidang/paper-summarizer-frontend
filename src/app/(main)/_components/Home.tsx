@@ -14,7 +14,6 @@ const Home = () => {
 
   useEffect(() => {
     const accessTokenFromCookie = getCookie("accessToken");
-
     if (accessTokenFromCookie) {
       setAccessToken(accessTokenFromCookie);
     } else {
@@ -46,7 +45,7 @@ const Home = () => {
           !userInfo.profileImageUrl &&
           userInfo.interests.length === 0)
       ) {
-        router.push("/sign-up");
+        router.push("/login");
         return;
       }
       setIsChecking(false);

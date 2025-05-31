@@ -1,8 +1,10 @@
 "use client";
 import React from "react";
 import { usePathname } from "next/navigation";
+import { useUserInfo } from "@/hooks/useUserData";
 
 const PublishedLayout = () => {
+  const { data: userInfo } = useUserInfo();
   const pathname = usePathname();
   const isSuccess = pathname.includes("success");
   return (
@@ -10,7 +12,7 @@ const PublishedLayout = () => {
       <div>
         <h1 className="text-3xl font-bold mt-8">
           {/**사용자 이름's paper로 수정 필요 */}
-          {isSuccess ? "논문 업로드 완료" : "oneieo's paper"}
+          {isSuccess ? "논문 업로드 완료" : `${userInfo?.username}'s paper`}
         </h1>
         <div className="w-[80rem] h-px bg-[#000000] my-8" />
       </div>
