@@ -1,13 +1,10 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect } from "react";
-import { useUserInfoStore } from "@/store/userInfoStore";
+import React from "react";
+import { useUserInfo } from "@/hooks/useUserData";
 
 const MyPageLayout = () => {
-  const { userInfo } = useUserInfoStore();
-  useEffect(() => {
-    console.log(userInfo?.profileImageUrl);
-  }, [userInfo]);
+  const { data: userInfo } = useUserInfo();
   return (
     <div className="flex flex-col items-center justify-center">
       <div>

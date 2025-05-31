@@ -195,10 +195,10 @@ const NotionEditor = ({
         }
         //console.log("마크다운 URL:", markdownUrl);
 
-        //const markdownContent = await fetchMarkdownFromUrl(markdownUrl);
-        const markdownContent = await fetchMarkdownFromUrl(
-          "https://paper-dev-test-magic-pdf-output.s3.ap-northeast-2.amazonaws.com/summaries/4452/2a3fawdf-2316-4ce8-bf08-4d0c48dcb949.md"
-        );
+        const markdownContent = await fetchMarkdownFromUrl(markdownUrl);
+        // const markdownContent = await fetchMarkdownFromUrl(
+        //   "https://paper-dev-test-magic-pdf-output.s3.ap-northeast-2.amazonaws.com/summaries/4452/2a3fawdf-2316-4ce8-bf08-4d0c48dcb949.md"
+        // );
         if (!markdownContent) {
           throw new Error("마크다운 내용이 비어있습니다.");
         }

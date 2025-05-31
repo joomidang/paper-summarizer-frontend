@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import LootLayout from "./_components/LootLayout";
+import Providers from "./components/Providers";
 
 const pretendard = localFont({
   src: "../../public/fonts/PretendardVariable.woff2",
@@ -24,11 +25,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={pretendard.variable}>
       <body className={`${pretendard.className} min-h-screen flex flex-col`}>
-        <LootLayout />
-        <main className="flex-1">
-          {children} <ToastContainer position="top-center" autoClose={2000} />
-        </main>
-        <footer className="w-full h-[4.375rem] px-[20rem] bg-[#1F325C] flex justify-between items-center"></footer>
+        <Providers>
+          <LootLayout />
+          <main className="flex-1">
+            {children}
+            <ToastContainer position="top-center" autoClose={2000} />
+          </main>
+          <footer className="w-full h-[4.375rem] px-[20rem] bg-[#1F325C] flex justify-between items-center"></footer>
+        </Providers>
       </body>
     </html>
   );
