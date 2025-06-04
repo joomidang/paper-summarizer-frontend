@@ -8,9 +8,12 @@ import Image from "next/image";
 import { toast } from "react-toastify";
 import { useUserInfo } from "@/hooks/useUserData";
 import CommentItem from "./CommentItem";
+import PaperInfo from "./PaperInfo";
+import { SummaryData } from "@/types/summaryType";
 
 interface CommentZoneProps {
   summaryId: string;
+  summaryData: SummaryData;
 }
 
 export interface Comment {
@@ -153,7 +156,7 @@ const deleteComment = async ({
   }
 };
 
-const CommentZone = ({ summaryId }: CommentZoneProps) => {
+const CommentZone = ({ summaryId, summaryData }: CommentZoneProps) => {
   const queryClient = useQueryClient();
   const { data: userInfo } = useUserInfo();
 
@@ -340,6 +343,7 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
 
   return (
     <div className="max-h-screen w-[35.625rem] ">
+      <PaperInfo summaryData={summaryData} />
       <div className="w-[35.625rem] max-h-[44rem] overflow-y-auto  bg-white rounded-lg border border-gray-300 p-4 mb-4 shadow-sm flex flex-col justify-between">
         <div className="flex flex-col">
           <div>
@@ -384,11 +388,11 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
       <div className="flex flex-col gap-3 mt-2">
         {/* 댓글 수정 중일 때 원본 댓글 표시 */}
         {editingComment && (
-          <div className="bg-orange-50 border-l-4 border-orange-400 p-4 rounded">
+          <div className="bg-gray-50 border-l-4 border-gray-400 p-4 rounded">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-orange-600 font-medium text-sm">
+                  <span className="text-gray-600 font-medium text-sm">
                     {editingComment.authorName}님의 댓글 수정중...
                   </span>
                 </div>

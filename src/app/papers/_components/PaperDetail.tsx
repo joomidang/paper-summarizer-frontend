@@ -4,9 +4,10 @@ import { useFileStore } from "@/store/fileStore";
 import React, { useEffect, useRef, useState } from "react";
 import Summary from "./Summary";
 import CommentZone from "./CommentZone";
+import { SummaryData } from "@/types/summaryType";
 
 const PaperDetail = ({ summaryId }: { summaryId: string }) => {
-  const [, setSummaryData] = useState<string | null>(null);
+  const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const hasRun = useRef(false);
@@ -37,8 +38,7 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
         const result = await response.json();
         setSummaryData(result.data);
         setMarkdownUrl(result.data.markdownUrl);
-        //console.log("요약본 불러오기 성공:", result.data);
-        //console.log("markdownUrl:", result.data.markdownUrl);
+        console.log("요약본 불러오기 성공:", result.data);
       } catch (error) {
         console.error("요약본 데이터 가져오기 실패: ", error);
         setError("데이터를 불러오는 중 오류가 발생했습니다.");
@@ -52,7 +52,7 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
   }, [summaryId]);
 
   // 로딩 중이거나 markdownUrl이 아직 없을 때
-  if (loading || !markdownUrl) {
+  if (loading || !markdownUrl || !summaryData) {
     return (
       <div className="flex justify-center items-center">
         논문 요약본을 불러오는 중...
@@ -70,7 +70,7 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
         <Summary initialMarkdownUrl={markdownUrl} />
       </div>
       <div>
-        <CommentZone summaryId={summaryId} />
+        <CommentZone summaryId={summaryId} summaryData={summaryData} />
       </div>
     </div>
   );
