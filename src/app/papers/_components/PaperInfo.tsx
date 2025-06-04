@@ -41,37 +41,45 @@ const PaperInfo = ({ summaryData }: { summaryData: SummaryData }) => {
 
   return (
     <div className="w-[35.625rem] bg-white rounded-lg border border-gray-300 p-4 mb-3 shadow-sm flex flex-col justify-between">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div
-            className="flex items-center gap-1 text-gray-600 cursor-pointer"
-            onClick={onHeartClick}
-          >
-            {currentLikeCount > 0 || isHeartClicked ? (
-              <IoHeartSharp className="text-red-600 text-2xl" />
-            ) : (
-              <IoHeartOutline className="text-2xl text-gray-500" />
-            )}
-            <span>{currentLikeCount}</span>
+      <div className="flex flex-col items-center justify-start">
+        <div className="flex flex-wrap gap-2 w-full">
+          {summaryData.tags && summaryData.tags.length > 0 ? (
+            summaryData.tags.map((tag, index) => (
+              <span
+                key={index}
+                className="px-3 py-1 bg-[#2b498b] text-gray-100 rounded-full text-sm"
+              >
+                {tag}
+              </span>
+            ))
+          ) : (
+            <span className="px-3 py-1 bg-gray-200 text-gray-500 rounded-full text-sm">
+              etc
+            </span>
+          )}
+        </div>
+        <div className="w-full flex justify-between items-center mt-3">
+          <div className="text-gray-500 text-sm ">
+            {formatDateTime(summaryData.publishedAt)}
           </div>
-          <div className="flex items-center gap-1 text-gray-600">
-            <IoEyeOutline className="text-2xl" />
-            <span>{summaryData.viewCount}</span>
+          <div className="flex items-center gap-4">
+            <div
+              className="flex items-center gap-1 text-gray-600 cursor-pointer"
+              onClick={onHeartClick}
+            >
+              {currentLikeCount > 0 || isHeartClicked ? (
+                <IoHeartSharp className="text-red-600 text-2xl" />
+              ) : (
+                <IoHeartOutline className="text-2xl text-gray-500" />
+              )}
+              <span>{currentLikeCount}</span>
+            </div>
+            <div className="flex items-center gap-1 text-gray-600">
+              <IoEyeOutline className="text-2xl" />
+              <span>{summaryData.viewCount}</span>
+            </div>
           </div>
         </div>
-        <div className="text-gray-500 text-sm">
-          {formatDateTime(summaryData.publishedAt)}
-        </div>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {summaryData.tags.map((tag, index) => (
-          <span
-            key={index}
-            className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
-          >
-            {tag}
-          </span>
-        ))}
       </div>
     </div>
   );
