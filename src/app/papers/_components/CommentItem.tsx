@@ -12,6 +12,7 @@ const CommentItem = ({
   comment,
   summaryId,
   onReply,
+  onEdit,
   onUpdate,
   onDelete,
   userInfo,
@@ -23,6 +24,7 @@ const CommentItem = ({
     parentAuthor: string,
     parentContent: string
   ) => void;
+  onEdit: (commentId: number, content: string, authorName: string) => void;
   onUpdate: (commentId: number, content: string) => void;
   onDelete: (commentId: number) => void;
   userInfo: UserInfo;
@@ -85,7 +87,9 @@ const CommentItem = ({
               </button>
               {isMine && (
                 <button
-                  onClick={() => onUpdate(comment.id, comment.content)}
+                  onClick={() =>
+                    onEdit(comment.id, comment.content, comment.author.name)
+                  }
                   className="text-gray-500 text-sm hover:text-gray-700"
                 >
                   수정
@@ -125,6 +129,7 @@ const CommentItem = ({
               comment={reply}
               summaryId={summaryId}
               onReply={onReply}
+              onEdit={onEdit}
               onUpdate={onUpdate}
               onDelete={onDelete}
               userInfo={userInfo}
