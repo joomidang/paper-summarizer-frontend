@@ -303,7 +303,7 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
 
   return (
     <div className="max-h-screen w-[35.625rem] ">
-      <div className="w-[35.625rem] max-h-screen min-h-[44rem] bg-white rounded-lg border border-gray-300 p-4 mb-4 shadow-sm flex flex-col justify-between">
+      <div className="w-[35.625rem] max-h-[44rem] overflow-y-auto  bg-white rounded-lg border border-gray-300 p-4 mb-4 shadow-sm flex flex-col justify-between">
         <div className="flex flex-col">
           <div>
             {/* <div>토글 하트버튼</div> */}

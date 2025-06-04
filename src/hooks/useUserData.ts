@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCookie } from "@/app/utils/getCookie";
 import { apiUrl } from "@/app/(auth)/_components/Login";
 
@@ -102,6 +102,33 @@ const toggleSummaryLike = async (summaryId: string) => {
   return response.json();
 };
 
+// 댓글 좋아요/취소 API
+const toggleCommentLike = async ({
+  commentId,
+  action,
+}: {
+  commentId: number;
+  action: "like" | "dislike";
+}) => {
+  const response = await fetch(
+    `${apiUrl}/api/comments/${commentId}/like?action=${action}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${getCookie("accessToken")}`,
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to ${action} comment`);
+  }
+
+  return response.json();
+};
+
 // 훅들
 export const useUserInfo = () => {
   return useQuery({
@@ -190,4 +217,34 @@ export const useUserComments = () => {
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
+};
+
+export const useCommentLike = (commentId: number) => {
+  const {
+    mutate: toggleLike,
+    isPending: isLoading,
+    error,
+  } = useMutation({
+    mutationFn: toggleCommentLike,
+    onSuccess: (data) => {
+      console.log("Toggle like success:", data);
+    },
+    onError: (error) => {
+      console.error("Toggle like error:", error);
+    },
+  });
+
+  const handleHeartClick = (likeCount: number) => {
+    if (isLoading) return;
+
+    // likeCount가 0보다 크면 이미 좋아요를 눌렀다고 가정
+    const action = likeCount > 0 ? "dislike" : "like";
+    toggleLike({ commentId, action });
+  };
+
+  return {
+    handleHeartClick,
+    isLoading,
+    error,
+  };
 };
