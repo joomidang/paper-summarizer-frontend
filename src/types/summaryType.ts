@@ -16,3 +16,17 @@ export interface SummaryData {
   viewCount: number;
   markdownUrl: string;
 }
+
+export interface PopularSummary {
+  authorName: string;
+  authorProfileImage?: string;
+  brief: string;
+  commentCount: number;
+  createdAt?: string;
+  likeCount: number;
+  popularityScore?: number;
+  publishedAt: string;
+  summaryId: number;
+  title: string;
+  viewCount: number;
+}
