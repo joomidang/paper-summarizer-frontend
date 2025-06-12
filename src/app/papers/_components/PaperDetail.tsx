@@ -5,14 +5,15 @@ import React, { useEffect, useRef, useState } from "react";
 import Summary from "./Summary";
 import CommentZone from "./CommentZone";
 import { SummaryData } from "@/types/summaryType";
+import { useRecommendedSummaries } from "@/hooks/usePaperData";
 
 const PaperDetail = ({ summaryId }: { summaryId: string }) => {
   const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const hasRun = useRef(false);
-
   const { markdownUrl, setMarkdownUrl } = useFileStore();
+  const { data: recommendedSummaries } = useRecommendedSummaries(summaryId);
 
   useEffect(() => {
     // 이미 실행된 경우 중복 실행 방지
@@ -51,6 +52,10 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
     fetchSummaryData(summaryId);
   }, [summaryId]);
 
+  useEffect(() => {
+    console.log("추천 논문", recommendedSummaries);
+  }, [recommendedSummaries]);
+
   // 로딩 중이거나 markdownUrl이 아직 없을 때
   if (loading || !markdownUrl || !summaryData) {
     return (
@@ -65,12 +70,17 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
   }
 
   return (
-    <div className="flex justify-center items-start pb-11 gap-4">
-      <div className="bg-white shadow-sm rounded-lg border border-gray-300 xl:w-[43.125rem] max-h-[55.813rem] overflow-y-auto">
-        <Summary initialMarkdownUrl={markdownUrl} />
+    <div className="flex flex-col justify-center items-center pb-11 gap-4">
+      <div className="flex justify-center items-start gap-4">
+        <div className="bg-white shadow-sm rounded-lg border border-gray-300 xl:w-[43.125rem] max-h-[55.813rem] overflow-y-auto">
+          <Summary initialMarkdownUrl={markdownUrl} />
+        </div>
+        <div>
+          <CommentZone summaryId={summaryId} summaryData={summaryData} />
+        </div>
       </div>
-      <div>
-        <CommentZone summaryId={summaryId} summaryData={summaryData} />
+      <div className="w-[80rem]">
+        <h1>추천 논문</h1>
       </div>
     </div>
   );

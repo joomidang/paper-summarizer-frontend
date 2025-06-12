@@ -37,19 +37,32 @@ const fetchPopularSummaries = async () => {
 };
 
 const fetchRecommendedSummaries = async (summaryId: string) => {
+  console.log("추천 논문 API 호출 - summaryId:", summaryId); // 디버깅용
+
   const accessToken = getCookie("accessToken");
   if (!accessToken) throw new Error("No access token");
 
-  const response = await fetch(
-    `${apiUrl}/api/summaries/${summaryId}/recommand`,
-    {
-      headers: { Authorization: `Bearer ${accessToken}` },
-      credentials: "include",
-    }
-  );
+  const url = `${apiUrl}/api/summaries/${summaryId}/recommendations`;
+  console.log("API URL:", url); // 디버깅용
 
-  if (!response.ok) throw new Error("요약본 불러오기 실패");
+  const response = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    credentials: "include",
+  });
+
+  console.log("Response status:", response.status); // 디버깅용
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.log("Error response:", errorText); // 디버깅용
+    throw new Error(`추천 논문 불러오기 실패: ${response.status}`);
+  }
+
   const result = await response.json();
+  console.log("추천 논문 API 응답:", result); // 디버깅용
   return result.data?.content || [];
 };
 
@@ -79,9 +92,14 @@ const fetchTagSummaries = async (tagName: string) => {
   if (!accessToken) throw new Error("No access token");
 
   const response = await fetch(
-    `${apiUrl}/api/summaries/tag?tagName=${tagName}&page=0&size=20`,
+    `${apiUrl}/api/summaries/tag?tag=${encodeURIComponent(
+      tagName
+    )}&page=0&size=20`,
     {
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
       credentials: "include",
     }
   );
@@ -95,7 +113,10 @@ export const useTagSummaries = (tagName: string) => {
   return useQuery({
     queryKey: ["tagSummaries", tagName],
     queryFn: () => fetchTagSummaries(tagName),
-    enabled: typeof window !== "undefined" && !!getCookie("accessToken"),
+    enabled:
+      !!tagName && // tagName이 있을 때만 실행
+      typeof window !== "undefined" &&
+      !!getCookie("accessToken"),
     retry: 1,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -139,7 +160,10 @@ export const useRecommendedSummaries = (summaryId: string) => {
   return useQuery({
     queryKey: ["recommendedSummaries", summaryId],
     queryFn: () => fetchRecommendedSummaries(summaryId),
-    enabled: typeof window !== "undefined" && !!getCookie("accessToken"),
+    enabled:
+      !!summaryId && // summaryId가 있을 때만 실행
+      typeof window !== "undefined" &&
+      !!getCookie("accessToken"),
     retry: 1,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,

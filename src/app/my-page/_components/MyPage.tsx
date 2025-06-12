@@ -142,7 +142,7 @@ const MyPage = () => {
       {isClicked === "summary" && (
         <>
           {summariesLoading ? (
-            <div className="max-w-4xl mx-auto mt-8 text-center">
+            <div className="max-w-4xl mx-auto mt-8 text-center mb-8">
               요약본을 불러오는 중...
             </div>
           ) : summaries && summaries.length > 0 ? (
@@ -178,7 +178,7 @@ const MyPage = () => {
       )}
 
       {isClicked === "like" && (
-        <div className="max-w-4xl mx-auto mt-8">
+        <div className="max-w-4xl mx-auto mt-8 mb-8">
           {likesLoading ? (
             <div className="text-center">좋아요를 불러오는 중...</div>
           ) : likes && likes.likes.length > 0 ? (
@@ -196,7 +196,7 @@ const MyPage = () => {
       )}
 
       {isClicked === "comment" && (
-        <div className="max-w-4xl mx-auto mt-8">
+        <div className="max-w-4xl mx-auto mt-8 mb-8">
           {commentsLoading ? (
             <div className="text-center">댓글을 불러오는 중...</div>
           ) : comments?.content && comments.content.length > 0 ? (
