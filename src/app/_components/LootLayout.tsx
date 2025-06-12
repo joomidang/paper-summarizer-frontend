@@ -102,7 +102,7 @@ const LootLayout = () => {
         <Link href={"/"}>
           <h1 className="text-[#fffef8] text-[1.125rem] font-semibold">Home</h1>
         </Link>
-        <Link href={"/papers"}>
+        <Link href={"/papers/browsing"}>
           <h1 className="text-[#fffef8] text-[1.125rem] font-semibold">
             논문 둘러보기
           </h1>
