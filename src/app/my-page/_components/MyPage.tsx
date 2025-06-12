@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
-  //useUserComments,
+  useUserComments,
   useUserInfo,
   useUserInterests,
   useUserLikes,
@@ -12,6 +12,7 @@ import {
 import { Summary } from "@/types/summaryType";
 import MySummary from "./MySummary";
 import MyLikes from "./MyLikes";
+import MyComment, { CommentData } from "./MyComment";
 
 const MyPage = () => {
   const [isClient, setIsClient] = useState(false);
@@ -23,7 +24,7 @@ const MyPage = () => {
   const { data: interests, isLoading: interestsLoading } = useUserInterests();
   const { data: summaries, isLoading: summariesLoading } = useUserSummaries();
   const { data: likes, isLoading: likesLoading } = useUserLikes();
-  //const { data: comments, isLoading: commentsLoading } = useUserComments();
+  const { data: comments, isLoading: commentsLoading } = useUserComments();
 
   const [isClicked, setIsClicked] = useState<
     "summary" | "like" | "comment" | "interest"
@@ -32,6 +33,8 @@ const MyPage = () => {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  console.log("comments:", comments);
 
   if (!isClient) {
     return (
@@ -49,7 +52,6 @@ const MyPage = () => {
     );
   }
 
-  // 에러 상태 처리
   if (userError || !userInfo) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -140,7 +142,7 @@ const MyPage = () => {
       {isClicked === "summary" && (
         <>
           {summariesLoading ? (
-            <div className="max-w-4xl mx-auto mt-8 text-center">
+            <div className="max-w-4xl mx-auto mt-8 text-center mb-8">
               요약본을 불러오는 중...
             </div>
           ) : summaries && summaries.length > 0 ? (
@@ -176,7 +178,7 @@ const MyPage = () => {
       )}
 
       {isClicked === "like" && (
-        <div className="max-w-4xl mx-auto mt-8">
+        <div className="max-w-4xl mx-auto mt-8 mb-8">
           {likesLoading ? (
             <div className="text-center">좋아요를 불러오는 중...</div>
           ) : likes && likes.likes.length > 0 ? (
@@ -194,8 +196,18 @@ const MyPage = () => {
       )}
 
       {isClicked === "comment" && (
-        <div className="max-w-4xl mx-auto mt-8 text-center text-gray-500">
-          내가 쓴 댓글 영역
+        <div className="max-w-4xl mx-auto mt-8 mb-8">
+          {commentsLoading ? (
+            <div className="text-center">댓글을 불러오는 중...</div>
+          ) : comments?.content && comments.content.length > 0 ? (
+            <div className="grid grid-cols-2 gap-6">
+              {comments.content.map((comment: CommentData) => (
+                <MyComment key={comment.commentId} comment={comment} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-gray-500">댓글이 없습니다.</div>
+          )}
         </div>
       )}
 

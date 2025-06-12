@@ -4,14 +4,16 @@ import { useFileStore } from "@/store/fileStore";
 import React, { useEffect, useRef, useState } from "react";
 import Summary from "./Summary";
 import CommentZone from "./CommentZone";
+import { SummaryData } from "@/types/summaryType";
+import { useRecommendedSummaries } from "@/hooks/usePaperData";
 
 const PaperDetail = ({ summaryId }: { summaryId: string }) => {
-  const [, setSummaryData] = useState<string | null>(null);
+  const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const hasRun = useRef(false);
-
   const { markdownUrl, setMarkdownUrl } = useFileStore();
+  const { data: recommendedSummaries } = useRecommendedSummaries(summaryId);
 
   useEffect(() => {
     // 이미 실행된 경우 중복 실행 방지
@@ -37,8 +39,7 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
         const result = await response.json();
         setSummaryData(result.data);
         setMarkdownUrl(result.data.markdownUrl);
-        //console.log("요약본 불러오기 성공:", result.data);
-        //console.log("markdownUrl:", result.data.markdownUrl);
+        console.log("요약본 불러오기 성공:", result.data);
       } catch (error) {
         console.error("요약본 데이터 가져오기 실패: ", error);
         setError("데이터를 불러오는 중 오류가 발생했습니다.");
@@ -51,8 +52,12 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
     fetchSummaryData(summaryId);
   }, [summaryId]);
 
+  useEffect(() => {
+    console.log("추천 논문", recommendedSummaries);
+  }, [recommendedSummaries]);
+
   // 로딩 중이거나 markdownUrl이 아직 없을 때
-  if (loading || !markdownUrl) {
+  if (loading || !markdownUrl || !summaryData) {
     return (
       <div className="flex justify-center items-center">
         논문 요약본을 불러오는 중...
@@ -65,12 +70,17 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
   }
 
   return (
-    <div className="flex justify-center items-start pb-11 gap-4">
-      <div className="bg-white shadow-sm rounded-lg border border-gray-300 xl:w-[43.125rem] max-h-[55.813rem] overflow-y-auto">
-        <Summary initialMarkdownUrl={markdownUrl} />
+    <div className="flex flex-col justify-center items-center pb-11 gap-4">
+      <div className="flex justify-center items-start gap-4">
+        <div className="bg-white shadow-sm rounded-lg border border-gray-300 xl:w-[43.125rem] max-h-[55.813rem] overflow-y-auto">
+          <Summary initialMarkdownUrl={markdownUrl} />
+        </div>
+        <div>
+          <CommentZone summaryId={summaryId} summaryData={summaryData} />
+        </div>
       </div>
-      <div>
-        <CommentZone summaryId={summaryId} />
+      <div className="w-[80rem]">
+        <h1>추천 논문</h1>
       </div>
     </div>
   );

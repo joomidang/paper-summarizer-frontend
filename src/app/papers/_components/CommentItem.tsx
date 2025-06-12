@@ -4,11 +4,15 @@ import { UserInfo } from "@/types/userInfoType";
 import Image from "next/image";
 import { useState } from "react";
 import { Comment } from "./CommentZone";
+import { IoHeartOutline } from "react-icons/io5";
+import { IoHeartSharp } from "react-icons/io5";
+import { useCommentLike } from "@/hooks/useUserData";
 
 const CommentItem = ({
   comment,
   summaryId,
   onReply,
+  onEdit,
   onUpdate,
   onDelete,
   userInfo,
@@ -20,12 +24,26 @@ const CommentItem = ({
     parentAuthor: string,
     parentContent: string
   ) => void;
+  onEdit: (commentId: number, content: string, authorName: string) => void;
   onUpdate: (commentId: number, content: string) => void;
   onDelete: (commentId: number) => void;
   userInfo: UserInfo;
 }) => {
-  const [showReplies, setShowReplies] = useState(true);
+  const [isHeartClicked, setIsHeartClicked] = useState<boolean>(false);
+  const [showReplies, setShowReplies] = useState<boolean>(true);
   const isMine = userInfo?.id === comment.author.id;
+  const [currentLikeCount, setCurrentLikeCount] = useState(comment.likeCount);
+  const { handleHeartClick, isLoading } = useCommentLike(comment.id);
+
+  const onHeartClick = () => {
+    if (isLoading) return;
+    const previousCount = currentLikeCount;
+    const newCount =
+      currentLikeCount > 0 ? currentLikeCount - 1 : currentLikeCount + 1;
+    setCurrentLikeCount(newCount);
+    setIsHeartClicked(!isHeartClicked);
+    handleHeartClick(previousCount);
+  };
 
   return (
     <div className="space-y-4">
@@ -52,6 +70,13 @@ const CommentItem = ({
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <div onClick={onHeartClick} className="cursor-pointer">
+                {comment.likeCount > 0 || isHeartClicked ? (
+                  <IoHeartSharp className="text-red-600" />
+                ) : (
+                  <IoHeartOutline className="text-gray-500" />
+                )}
+              </div>
               <button
                 onClick={() =>
                   onReply(comment.id, comment.author.name, comment.content)
@@ -62,7 +87,9 @@ const CommentItem = ({
               </button>
               {isMine && (
                 <button
-                  onClick={() => onUpdate(comment.id, comment.content)}
+                  onClick={() =>
+                    onEdit(comment.id, comment.content, comment.author.name)
+                  }
                   className="text-gray-500 text-sm hover:text-gray-700"
                 >
                   수정
@@ -102,6 +129,7 @@ const CommentItem = ({
               comment={reply}
               summaryId={summaryId}
               onReply={onReply}
+              onEdit={onEdit}
               onUpdate={onUpdate}
               onDelete={onDelete}
               userInfo={userInfo}

@@ -8,9 +8,12 @@ import Image from "next/image";
 import { toast } from "react-toastify";
 import { useUserInfo } from "@/hooks/useUserData";
 import CommentItem from "./CommentItem";
+import PaperInfo from "./PaperInfo";
+import { SummaryData } from "@/types/summaryType";
 
 interface CommentZoneProps {
   summaryId: string;
+  summaryData: SummaryData;
 }
 
 export interface Comment {
@@ -153,16 +156,24 @@ const deleteComment = async ({
   }
 };
 
-const CommentZone = ({ summaryId }: CommentZoneProps) => {
+const CommentZone = ({ summaryId, summaryData }: CommentZoneProps) => {
   const queryClient = useQueryClient();
   const { data: userInfo } = useUserInfo();
+
+  // 상태 관리
   const [comment, setComment] = useState<string>("");
   const [replyTo, setReplyTo] = useState<{
     id: number;
     name: string;
     content: string;
   } | null>(null);
+  const [editingComment, setEditingComment] = useState<{
+    id: number;
+    content: string;
+    authorName: string;
+  } | null>(null);
 
+  // 쿼리
   const {
     data: comments = [],
     isLoading,
@@ -175,6 +186,7 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
     staleTime: 30 * 1000,
   });
 
+  // 뮤테이션들
   const createCommentMutation = useMutation({
     mutationFn: createComment,
     onSuccess: () => {
@@ -211,6 +223,12 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
       queryClient.invalidateQueries({
         queryKey: ["comments", summaryId],
       });
+      setEditingComment(null);
+      setComment("");
+    },
+    onError: (error) => {
+      console.error("댓글 수정 에러:", error);
+      toast.error("댓글 수정에 실패했습니다.");
     },
   });
 
@@ -227,34 +245,34 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
     },
   });
 
-  const handleCommentSubmit = async () => {
-    if (!comment.trim()) return;
-
-    if (replyTo) {
-      createReplyMutation.mutate({
-        summaryId,
-        commentId: replyTo.id,
-        content: comment.trim(),
-      });
-    } else {
-      createCommentMutation.mutate({
-        summaryId,
-        content: comment.trim(),
-      });
-    }
-  };
-
+  // 핸들러 함수들
   const handleReply = (
     parentId: number,
     parentAuthor: string,
     parentContent: string
   ) => {
+    setEditingComment(null); // 수정 중이면 취소
     setReplyTo({ id: parentId, name: parentAuthor, content: parentContent });
     setComment(`@${parentAuthor} `);
   };
 
   const handleCancelReply = () => {
     setReplyTo(null);
+    setComment("");
+  };
+
+  const handleEditComment = (
+    commentId: number,
+    content: string,
+    authorName: string
+  ) => {
+    setReplyTo(null); // 답글 작성 중이면 취소
+    setEditingComment({ id: commentId, content, authorName });
+    setComment(content);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingComment(null);
     setComment("");
   };
 
@@ -270,6 +288,28 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
       deleteCommentMutation.mutate({
         summaryId,
         commentId,
+      });
+    }
+  };
+
+  const handleCommentSubmit = async () => {
+    if (!comment.trim()) return;
+
+    if (editingComment) {
+      // 수정 모드
+      handleUpdateComment(editingComment.id, comment.trim());
+    } else if (replyTo) {
+      // 답글 모드
+      createReplyMutation.mutate({
+        summaryId,
+        commentId: replyTo.id,
+        content: comment.trim(),
+      });
+    } else {
+      // 새 댓글 모드
+      createCommentMutation.mutate({
+        summaryId,
+        content: comment.trim(),
       });
     }
   };
@@ -303,10 +343,10 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
 
   return (
     <div className="max-h-screen w-[35.625rem] ">
-      <div className="w-[35.625rem] max-h-screen min-h-[44rem] bg-white rounded-lg border border-gray-300 p-4 mb-4 shadow-sm flex flex-col justify-between">
+      <PaperInfo summaryData={summaryData} />
+      <div className="w-[35.625rem] max-h-[44rem] overflow-y-auto  bg-white rounded-lg border border-gray-300 p-4 mb-4 shadow-sm flex flex-col justify-between">
         <div className="flex flex-col">
           <div>
-            {/* <div>토글 하트버튼</div> */}
             <div className="font-bold text-lg mb-4">
               {isLoading
                 ? "로딩 중..."
@@ -330,6 +370,7 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
                   comment={comment}
                   summaryId={summaryId}
                   onReply={handleReply}
+                  onEdit={handleEditComment}
                   onUpdate={handleUpdateComment}
                   onDelete={handleDeleteComment}
                   userInfo={userInfo}
@@ -343,7 +384,35 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
           </div>
         </div>
       </div>
+
       <div className="flex flex-col gap-3 mt-2">
+        {/* 댓글 수정 중일 때 원본 댓글 표시 */}
+        {editingComment && (
+          <div className="bg-gray-50 border-l-4 border-gray-400 p-4 rounded">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-gray-600 font-medium text-sm">
+                    {editingComment.authorName}님의 댓글 수정중...
+                  </span>
+                </div>
+                <div className="bg-white p-3 rounded border text-gray-700 text-sm">
+                  {editingComment.content.length > 100
+                    ? `${editingComment.content.substring(0, 100)}...`
+                    : editingComment.content}
+                </div>
+              </div>
+              <button
+                onClick={handleCancelEdit}
+                className="text-gray-400 hover:text-gray-600 ml-3 flex-shrink-0"
+                title="수정 취소"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* 대댓글 작성 중일 때 원본 댓글 표시 */}
         {replyTo && (
           <div className="bg-gray-50 border-l-4 border-[#42598C] p-4 rounded">
@@ -390,10 +459,16 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
               onChange={(e) => setComment(e.target.value)}
               onKeyDown={handleKeyPress}
               placeholder={
-                replyTo ? `${replyTo.name}님에게 답글...` : "댓글을 입력하세요"
+                editingComment
+                  ? "댓글을 수정하세요"
+                  : replyTo
+                  ? `${replyTo.name}님에게 답글...`
+                  : "댓글을 입력하세요"
               }
               disabled={
-                createCommentMutation.isPending || createReplyMutation.isPending
+                createCommentMutation.isPending ||
+                createReplyMutation.isPending ||
+                updateCommentMutation.isPending
               }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#42598C] focus:border-transparent transition-all disabled:opacity-50"
             />
@@ -402,12 +477,17 @@ const CommentZone = ({ summaryId }: CommentZoneProps) => {
               disabled={
                 !comment.trim() ||
                 createCommentMutation.isPending ||
-                createReplyMutation.isPending
+                createReplyMutation.isPending ||
+                updateCommentMutation.isPending
               }
               className="px-6 py-2 bg-[#42598C] text-white rounded-lg hover:bg-[#304268] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
             >
-              {createCommentMutation.isPending || createReplyMutation.isPending
-                ? "작성 중..."
+              {createCommentMutation.isPending ||
+              createReplyMutation.isPending ||
+              updateCommentMutation.isPending
+                ? "처리 중..."
+                : editingComment
+                ? "수정 완료"
                 : replyTo
                 ? "답글 작성"
                 : "작성"}

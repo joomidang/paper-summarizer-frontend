@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCookie } from "@/app/utils/getCookie";
 import { apiUrl } from "@/app/(auth)/_components/Login";
 
@@ -85,20 +85,56 @@ const fetchUserComments = async () => {
 };
 
 // 요약본 좋아요 토글
-const toggleSummaryLike = async (summaryId: string) => {
-  const accessToken = getCookie("accessToken");
-  if (!accessToken) throw new Error("No access token");
+const toggleSummaryLike = async (
+  summaryId: string,
+  currentLikeCount: number
+) => {
+  const action = currentLikeCount > 0 ? "dislike" : "like";
 
-  const response = await fetch(`${apiUrl}/api/summaries/${summaryId}/like`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
+  const response = await fetch(
+    `${apiUrl}/api/summaries/${summaryId}/like?action=${action}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${getCookie("accessToken")}`,
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
 
-  if (!response.ok) throw new Error("좋아요 토글 실패");
+  if (!response.ok) {
+    throw new Error(`Failed to ${action} summary`);
+  }
+
+  // 서버에서 { likeCount: number, liked: boolean } 형태로 응답한다고 가정
+  return response.json();
+};
+
+// 댓글 좋아요/취소 API
+const toggleCommentLike = async ({
+  commentId,
+  action,
+}: {
+  commentId: number;
+  action: "like" | "dislike";
+}) => {
+  const response = await fetch(
+    `${apiUrl}/api/comments/${commentId}/like?action=${action}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${getCookie("accessToken")}`,
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to ${action} comment`);
+  }
+
   return response.json();
 };
 
@@ -136,9 +172,68 @@ export const useUserInterests = () => {
   });
 };
 
-export const useUserLikes = (summaryId?: string) => {
+export const useSummaryLike = (
+  summaryId: string,
+  callbacks?: {
+    onSuccess?: (data: { likeCount: number; liked: boolean }) => void;
+    onError?: (error: Error) => void;
+  }
+) => {
   const queryClient = useQueryClient();
 
+  const {
+    mutate: toggleLike,
+    isPending: isLoading,
+    error,
+  } = useMutation({
+    mutationFn: (currentLikeCount: number) =>
+      toggleSummaryLike(summaryId, currentLikeCount),
+    onSuccess: (data) => {
+      // 서버 응답 데이터로 상태 업데이트
+      if (data && data.likeCount !== undefined) {
+        // 좋아요 상태 즉시 업데이트
+        queryClient.setQueryData(
+          ["userLikes"],
+          (oldData: Like[] | undefined) => {
+            if (!oldData) return [];
+            const isLiked = data.liked; // liked 필드 사용
+            const existingLike = oldData.find(
+              (like) => like.summaryId === summaryId
+            );
+
+            if (isLiked && !existingLike) {
+              return [...oldData, { summaryId, id: Date.now() }];
+            } else if (!isLiked && existingLike) {
+              return oldData.filter((like) => like.summaryId !== summaryId);
+            }
+            return oldData;
+          }
+        );
+
+        // 사용자 정의 콜백 실행
+        callbacks?.onSuccess?.(data);
+      }
+
+      // 관련 쿼리 무효화
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["userLikes"] }),
+        queryClient.invalidateQueries({ queryKey: ["summary", summaryId] }),
+      ]);
+    },
+    onError: (error) => {
+      console.error("좋아요 토글 실패:", error);
+      callbacks?.onError?.(error);
+    },
+  });
+
+  return {
+    toggleLike,
+    isLoading,
+    error,
+  };
+};
+
+export const useUserLikes = (summaryId?: string) => {
   const { data: likes = [], ...rest } = useQuery({
     queryKey: ["userLikes"],
     queryFn: fetchUserLikes,
@@ -147,21 +242,6 @@ export const useUserLikes = (summaryId?: string) => {
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
-
-  const toggleLike = async () => {
-    if (!summaryId) return;
-
-    try {
-      await toggleSummaryLike(summaryId);
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["userLikes"] }),
-        queryClient.invalidateQueries({ queryKey: ["summary", summaryId] }),
-      ]);
-    } catch (error) {
-      console.error("좋아요 토글 실패:", error);
-      throw error;
-    }
-  };
 
   const isLiked = summaryId
     ? likes.some((like: Like) => like.summaryId === summaryId)
@@ -177,7 +257,6 @@ export const useUserLikes = (summaryId?: string) => {
       isLiked,
       likeCount,
     },
-    toggleLike,
   };
 };
 
@@ -190,4 +269,34 @@ export const useUserComments = () => {
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
+};
+
+export const useCommentLike = (commentId: number) => {
+  const {
+    mutate: toggleLike,
+    isPending: isLoading,
+    error,
+  } = useMutation({
+    mutationFn: toggleCommentLike,
+    onSuccess: (data) => {
+      console.log("Toggle like success:", data);
+    },
+    onError: (error) => {
+      console.error("Toggle like error:", error);
+    },
+  });
+
+  const handleHeartClick = (likeCount: number) => {
+    if (isLoading) return;
+
+    // likeCount가 0보다 크면 이미 좋아요를 눌렀다고 가정
+    const action = likeCount > 0 ? "dislike" : "like";
+    toggleLike({ commentId, action });
+  };
+
+  return {
+    handleHeartClick,
+    isLoading,
+    error,
+  };
 };
