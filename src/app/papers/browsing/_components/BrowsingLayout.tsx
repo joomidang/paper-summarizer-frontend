@@ -5,15 +5,18 @@ import { useUserInfo } from "@/hooks/useUserData";
 import { IoSearchOutline } from "react-icons/io5";
 import { useKeywordStore } from "@/store/keywordStore";
 import { useSearchSummaries } from "@/hooks/usePaperData";
+import { useRouter } from "next/navigation";
 
 const BrowsingLayout = () => {
   const { data: userInfo } = useUserInfo();
   const { keyword, setKeyword } = useKeywordStore();
   const { refetch } = useSearchSummaries(keyword);
+  const router = useRouter();
 
   const handleSearch = (keyword: string) => {
     if (keyword.trim()) {
       refetch();
+      router.push(`/papers/browsing/search/${keyword}`);
     }
   };
 

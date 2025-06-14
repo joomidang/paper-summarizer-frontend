@@ -31,7 +31,7 @@ const HomeLayout = () => {
                 onChange={(e) => setKeyword(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    router.push(`/papers/browsing`);
+                    router.push(`/papers/browsing/search/${keyword}`);
                   }
                 }}
                 className="w-[25rem] h-[2.5rem] rounded-full border border-gray-500 shadow- bg-gray-100 pl-9 mr-5 focus:outline-0 focus:bg-gray-200"

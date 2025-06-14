@@ -138,7 +138,7 @@ export const useSearchSummaries = (keyword: string) => {
   return useQuery({
     queryKey: ["searchSummaries", keyword],
     queryFn: () => fetchSearchSummaries(keyword),
-    enabled: false, // 수동으로만 실행
+    enabled: false, // 기본적으로 비활성화
     retry: 1,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
