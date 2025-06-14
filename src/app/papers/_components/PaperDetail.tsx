@@ -6,6 +6,7 @@ import Summary from "./Summary";
 import CommentZone from "./CommentZone";
 import { SummaryData } from "@/types/summaryType";
 import { useRecommendedSummaries } from "@/hooks/usePaperData";
+import { useSummaryStore } from "@/store/summaryStore";
 
 const PaperDetail = ({ summaryId }: { summaryId: string }) => {
   const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
@@ -14,6 +15,7 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
   const hasRun = useRef(false);
   const { markdownUrl, setMarkdownUrl } = useFileStore();
   const { data: recommendedSummaries } = useRecommendedSummaries(summaryId);
+  const { setAuthorName } = useSummaryStore();
 
   useEffect(() => {
     // 이미 실행된 경우 중복 실행 방지
@@ -39,6 +41,7 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
         const result = await response.json();
         setSummaryData(result.data);
         setMarkdownUrl(result.data.markdownUrl);
+        setAuthorName(result.data.authorName);
         console.log("요약본 불러오기 성공:", result.data);
       } catch (error) {
         console.error("요약본 데이터 가져오기 실패: ", error);
