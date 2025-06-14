@@ -47,9 +47,7 @@ const Browsing = () => {
       <div className="w-full flex flex-col items-center justify-center">
         <div className="flex flex-col items-center justify-center gap-2">
           <h1 className="text-3xl font-bold my-9">인기 태그</h1>
-          <span className="text-white px-4 py-1 rounded-full bg-[#898989]">
-            로딩 중...
-          </span>
+          <span className="text-white px-4 py-1 rounded-full "></span>
         </div>
       </div>
     );
@@ -77,11 +75,13 @@ const Browsing = () => {
           </div>
         )}
 
-        {/* 요약본 목록 표시 */}
+        {/* 검색 결과 표시 */}
+
+        {/* 태그 기반 요약본 표시 */}
         <div className="mt-6 w-full">
           {summariesLoading ? (
             <div className="text-center py-8">
-              <span>요약본 로딩 중...</span>
+              {/* <span>요약본 로딩 중...</span> */}
             </div>
           ) : tagSummaries && tagSummaries.length > 0 ? (
             <div className="max-w-7xl mx-auto grid grid-cols-2 gap-6 mt-6">
