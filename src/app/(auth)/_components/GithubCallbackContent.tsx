@@ -88,9 +88,9 @@ const GithubCallbackContent = () => {
 
   const getApiEndpoint = (code: string) => {
     if (process.env.NODE_ENV === "production") {
-      return `/api/proxy/api/auth/github/callback?code=${code}`;
-    } else {
       return `/api/auth/github/callback?code=${code}`;
+    } else {
+      return `http://localhost:8080/api/auth/github/callback?code=${code}`;
     }
   };
 
