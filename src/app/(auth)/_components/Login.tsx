@@ -1,11 +1,7 @@
 "use client";
 import React from "react";
 
-//export const apiUrl = process.env.NEXT_PUBLIC_SERVER_URL;
-export const apiUrl =
-  process.env.NODE_ENV === "production"
-    ? "/api/proxy" // 프로덕션에서는 프록시 사용
-    : process.env.NEXT_PUBLIC_SERVER_URL; // 개발환경에서는 직접 호출
+export const apiUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
 const Login = () => {
   const handleGithubLoginBtn = async () => {
