@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+const vercelUrl = "https://paper-summarizer-frontend.vercel.app";
+
 const GithubCallbackContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -21,13 +23,16 @@ const GithubCallbackContent = () => {
           return;
         }
 
-        const response = await fetch(`/api/auth/github/callback?code=${code}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
+        const response = await fetch(
+          `${vercelUrl}/api/auth/github/callback?code=${code}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
 
         console.log("백엔드 응답 상태:", response.status);
 
