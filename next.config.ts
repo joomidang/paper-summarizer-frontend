@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "paper-dev-test-magic-pdf-input.s3.amazonaws.com",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
   /* config options here */

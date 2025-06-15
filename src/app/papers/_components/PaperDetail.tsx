@@ -7,6 +7,7 @@ import CommentZone from "./CommentZone";
 import { SummaryData } from "@/types/summaryType";
 import { useRecommendedSummaries } from "@/hooks/usePaperData";
 import { useSummaryStore } from "@/store/summaryStore";
+import PopularSummary from "@/app/(main)/_components/PopularSummary";
 
 const PaperDetail = ({ summaryId }: { summaryId: string }) => {
   const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
@@ -14,7 +15,8 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
   const [error, setError] = useState<string | null>(null);
   const hasRun = useRef(false);
   const { markdownUrl, setMarkdownUrl } = useFileStore();
-  const { data: recommendedSummaries } = useRecommendedSummaries(summaryId);
+  const { data: recommendedSummaries, isLoading: recommendationsLoading } =
+    useRecommendedSummaries(summaryId);
   const { setAuthorName } = useSummaryStore();
 
   useEffect(() => {
@@ -82,8 +84,29 @@ const PaperDetail = ({ summaryId }: { summaryId: string }) => {
           <CommentZone summaryId={summaryId} summaryData={summaryData} />
         </div>
       </div>
+
+      {/* 추천 논문 섹션 */}
       <div className="w-[80rem]">
-        <h1>추천 논문</h1>
+        <h1 className="font-bold text-3xl my-5">추천 논문</h1>
+
+        {recommendationsLoading ? (
+          <div className="text-center py-8">
+            <span className="text-gray-500">추천 논문을 불러오는 중...</span>
+          </div>
+        ) : recommendedSummaries && recommendedSummaries.length > 0 ? (
+          <div className="max-w-7xl mx-auto grid grid-cols-2 gap-6 mt-6">
+            {recommendedSummaries.map((summary: PopularSummary) => (
+              <PopularSummary key={summary.summaryId} summary={summary} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <div className="text-gray-500 text-lg">관련된 논문이 없습니다.</div>
+            <div className="text-gray-400 text-sm mt-2">
+              다른 논문을 탐색해보세요.
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
