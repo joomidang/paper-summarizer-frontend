@@ -46,6 +46,7 @@ const BrowsingLayout = () => {
                 width={45}
                 height={45}
                 className="cursor-pointer rounded-full"
+                onClick={() => router.push(`/my-page`)}
               />
             </div>
           </div>
