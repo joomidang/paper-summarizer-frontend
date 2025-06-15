@@ -88,7 +88,7 @@ const GithubCallbackContent = () => {
 
   const getApiEndpoint = (code: string) => {
     if (process.env.NODE_ENV === "production") {
-      return `/api/auth/github/callback?code=${code}`;
+      return `https://paper-summarizer-frontend.vercel.app/api/auth/github/callback?code=${code}`;
     } else {
       return `http://localhost:8080/api/auth/github/callback?code=${code}`;
     }
