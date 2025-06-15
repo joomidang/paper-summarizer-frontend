@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     const apiPath = url.pathname.replace("/api/proxy", "");
     const backendUrl = `${BACKEND_URL}${apiPath}${url.search}`;
 
-    console.log("Proxying GET request to:", backendUrl);
+    console.log("🔗 Proxying GET request to:", backendUrl);
 
     const response = await fetch(backendUrl, {
       method: "GET",
@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
         "Content-Type":
           request.headers.get("Content-Type") || "application/json",
         Cookie: request.headers.get("Cookie") || "",
+        "User-Agent": "Vercel-Proxy/1.0",
       },
     });
 
@@ -32,11 +33,12 @@ export async function GET(request: NextRequest) {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods":
           "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, Cookie",
+        "Access-Control-Allow-Credentials": "true",
       },
     });
   } catch (error) {
-    console.error("Proxy GET error:", error);
+    console.error("❌ Proxy GET error:", error);
     return NextResponse.json(
       { error: "Proxy request failed" },
       { status: 500 }
@@ -50,7 +52,7 @@ export async function POST(request: NextRequest) {
     const apiPath = url.pathname.replace("/api/proxy", "");
     const backendUrl = `${BACKEND_URL}${apiPath}${url.search}`;
 
-    console.log("Proxying POST request to:", backendUrl);
+    console.log("🔗 Proxying POST request to:", backendUrl);
 
     const body = await request.text();
 
@@ -61,6 +63,7 @@ export async function POST(request: NextRequest) {
         "Content-Type":
           request.headers.get("Content-Type") || "application/json",
         Cookie: request.headers.get("Cookie") || "",
+        "User-Agent": "Vercel-Proxy/1.0",
       },
       body: body,
     });
@@ -75,11 +78,12 @@ export async function POST(request: NextRequest) {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods":
           "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, Cookie",
+        "Access-Control-Allow-Credentials": "true",
       },
     });
   } catch (error) {
-    console.error("Proxy POST error:", error);
+    console.error("❌ Proxy POST error:", error);
     return NextResponse.json(
       { error: "Proxy request failed" },
       { status: 500 }
@@ -93,6 +97,8 @@ export async function PUT(request: NextRequest) {
     const apiPath = url.pathname.replace("/api/proxy", "");
     const backendUrl = `${BACKEND_URL}${apiPath}${url.search}`;
 
+    console.log("🔗 Proxying PUT request to:", backendUrl);
+
     const body = await request.text();
 
     const response = await fetch(backendUrl, {
@@ -102,6 +108,7 @@ export async function PUT(request: NextRequest) {
         "Content-Type":
           request.headers.get("Content-Type") || "application/json",
         Cookie: request.headers.get("Cookie") || "",
+        "User-Agent": "Vercel-Proxy/1.0",
       },
       body: body,
     });
@@ -113,10 +120,15 @@ export async function PUT(request: NextRequest) {
       headers: {
         "Content-Type":
           response.headers.get("Content-Type") || "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods":
+          "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, Cookie",
+        "Access-Control-Allow-Credentials": "true",
       },
     });
   } catch (error) {
-    console.error("Proxy PUT error:", error);
+    console.error("❌ Proxy PUT error:", error);
     return NextResponse.json(
       { error: "Proxy request failed" },
       { status: 500 }
@@ -130,6 +142,8 @@ export async function PATCH(request: NextRequest) {
     const apiPath = url.pathname.replace("/api/proxy", "");
     const backendUrl = `${BACKEND_URL}${apiPath}${url.search}`;
 
+    console.log("🔗 Proxying PATCH request to:", backendUrl);
+
     const body = await request.text();
 
     const response = await fetch(backendUrl, {
@@ -139,6 +153,7 @@ export async function PATCH(request: NextRequest) {
         "Content-Type":
           request.headers.get("Content-Type") || "application/json",
         Cookie: request.headers.get("Cookie") || "",
+        "User-Agent": "Vercel-Proxy/1.0",
       },
       body: body,
     });
@@ -150,10 +165,15 @@ export async function PATCH(request: NextRequest) {
       headers: {
         "Content-Type":
           response.headers.get("Content-Type") || "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods":
+          "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, Cookie",
+        "Access-Control-Allow-Credentials": "true",
       },
     });
   } catch (error) {
-    console.error("Proxy PATCH error:", error);
+    console.error("❌ Proxy PATCH error:", error);
     return NextResponse.json(
       { error: "Proxy request failed" },
       { status: 500 }
@@ -167,6 +187,8 @@ export async function DELETE(request: NextRequest) {
     const apiPath = url.pathname.replace("/api/proxy", "");
     const backendUrl = `${BACKEND_URL}${apiPath}${url.search}`;
 
+    console.log("🔗 Proxying DELETE request to:", backendUrl);
+
     const response = await fetch(backendUrl, {
       method: "DELETE",
       headers: {
@@ -174,6 +196,7 @@ export async function DELETE(request: NextRequest) {
         "Content-Type":
           request.headers.get("Content-Type") || "application/json",
         Cookie: request.headers.get("Cookie") || "",
+        "User-Agent": "Vercel-Proxy/1.0",
       },
     });
 
@@ -184,10 +207,15 @@ export async function DELETE(request: NextRequest) {
       headers: {
         "Content-Type":
           response.headers.get("Content-Type") || "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods":
+          "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, Cookie",
+        "Access-Control-Allow-Credentials": "true",
       },
     });
   } catch (error) {
-    console.error("Proxy DELETE error:", error);
+    console.error("❌ Proxy DELETE error:", error);
     return NextResponse.json(
       { error: "Proxy request failed" },
       { status: 500 }
@@ -203,12 +231,9 @@ export async function OPTIONS(_request: NextRequest) {
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization, Cookie",
+      "Access-Control-Allow-Credentials": "true",
+      "Access-Control-Max-Age": "86400",
     },
   });
 }
-
-// 기존 Login.tsx에서 apiUrl 변경
-// export const apiUrl = process.env.NODE_ENV === 'production'
-//   ? '/api/proxy'  // 프로덕션에서는 프록시 사용
-//   : 'http://localhost:8080';  // 개발환경에서는 직접 호출
