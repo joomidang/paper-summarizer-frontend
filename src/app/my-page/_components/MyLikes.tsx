@@ -1,3 +1,4 @@
+"use client";
 import { formatDateTime } from "@/app/utils/formatDateTime";
 import { Summary } from "@/types/summaryType";
 import { useRouter } from "next/navigation";

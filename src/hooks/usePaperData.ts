@@ -63,7 +63,7 @@ const fetchRecommendedSummaries = async (summaryId: string) => {
 
   const result = await response.json();
   console.log("추천 논문 API 응답:", result); // 디버깅용
-  return result.data?.content || [];
+  return result.data || [];
 };
 
 const fetchSearchSummaries = async (keyword: string) => {

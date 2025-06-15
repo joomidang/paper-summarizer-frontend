@@ -10,18 +10,28 @@ import {
   useUserSummaries,
 } from "@/hooks/useUserData";
 import { Summary } from "@/types/summaryType";
+import { UserInfo } from "@/types/userInfoType";
 import MySummary from "./MySummary";
 import MyLikes from "./MyLikes";
 import MyComment, { CommentData } from "./MyComment";
+import ProfileEditModal from "./ProfileEditModal";
+import { toast } from "react-toastify";
 
 const MyPage = () => {
   const [isClient, setIsClient] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const {
     data: userInfo,
     isLoading: userLoading,
     isError: userError,
+    refetch: refetchUserInfo,
   } = useUserInfo();
-  const { data: interests, isLoading: interestsLoading } = useUserInterests();
+  const {
+    data: interests,
+    isLoading: interestsLoading,
+    refetch: refetchInterests,
+  } = useUserInterests();
   const { data: summaries, isLoading: summariesLoading } = useUserSummaries();
   const { data: likes, isLoading: likesLoading } = useUserLikes();
   const { data: comments, isLoading: commentsLoading } = useUserComments();
@@ -33,6 +43,19 @@ const MyPage = () => {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  const handleProfileUpdate = async (updatedInfo: Partial<UserInfo>) => {
+    try {
+      console.log("프로필 업데이트:", updatedInfo);
+      await refetchUserInfo();
+      await refetchInterests();
+      toast.success("프로필이 성공적으로 업데이트되었습니다.");
+    } catch (error) {
+      console.error("프로필 업데이트 실패:", error);
+      toast.error(`프로필 업데이트에 실패했습니다.`);
+      throw error;
+    }
+  };
 
   console.log("comments:", comments);
 
@@ -69,7 +92,7 @@ const MyPage = () => {
             alt="profile"
             width={96}
             height={96}
-            className="rounded-full flex-shrink-0"
+            className="rounded-full flex-shrink-0 object-cover"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.src = "/images/default-profile.png";
@@ -88,12 +111,16 @@ const MyPage = () => {
             </div>
           </div>
           <div className="ml-auto">
-            <button className="px-4 py-2 bg-[#1A2747] text-white rounded hover:bg-[#223366]">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="px-4 py-2 bg-[#1A2747] text-white rounded hover:bg-[#223366] transition-colors"
+            >
               프로필 편집
             </button>
           </div>
         </div>
       </div>
+
       <div className="max-w-4xl mx-auto mt-6">
         <div className="flex border-b">
           <button
@@ -139,6 +166,7 @@ const MyPage = () => {
         </div>
       </div>
 
+      {/* 기존 탭 컨텐츠들... */}
       {isClicked === "summary" && (
         <>
           {summariesLoading ? (
@@ -233,6 +261,14 @@ const MyPage = () => {
           )}
         </div>
       )}
+
+      {/* 프로필 편집 모달 */}
+      <ProfileEditModal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        userInfo={userInfo}
+        onSave={handleProfileUpdate}
+      />
     </div>
   );
 };
