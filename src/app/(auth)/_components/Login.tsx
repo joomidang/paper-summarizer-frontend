@@ -2,14 +2,15 @@
 import React from "react";
 
 //export const apiUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
 export const apiUrl =
   process.env.NODE_ENV === "production"
-    ? "/api/proxy" // 프로덕션: Vercel 프록시 사용
-    : "http://localhost:8080"; // 개발환경: 로컬 백엔드 직접 호출
+    ? "/api/proxy" // 프로덕션에서는 프록시 사용
+    : "http://localhost:8080"; // 개발환경에서는 직접 호출
 
 const Login = () => {
   const handleGithubLoginBtn = async () => {
-    window.location.href = `${apiUrl}/api/auth/github`;
+    window.location.href = `http://ec2-43-202-9-100.ap-northeast-2.compute.amazonaws.com:8080/api/auth/github`;
   };
 
   return (
