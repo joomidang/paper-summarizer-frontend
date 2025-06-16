@@ -4,9 +4,7 @@ import React from "react";
 //export const apiUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
 export const apiUrl =
-  process.env.NODE_ENV === "production"
-    ? "/api/proxy" //
-    : "https://ec2-43-202-9-100.ap-northeast-2.compute.amazonaws.com";
+  "https://ec2-43-202-9-100.ap-northeast-2.compute.amazonaws.com";
 
 const Login = () => {
   const handleGithubLoginBtn = async () => {
