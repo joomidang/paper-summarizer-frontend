@@ -87,7 +87,7 @@ const GithubCallbackContent = () => {
   const [error, setError] = useState<string>("");
 
   const getApiEndpoint = (code: string) => {
-    return `http://localhost:8080/api/auth/github/callback?code=${code}`;
+    return `/api/auth/github/callback?code=${code}`;
   };
 
   useEffect(() => {
