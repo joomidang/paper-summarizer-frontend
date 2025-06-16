@@ -5,8 +5,8 @@ import React from "react";
 
 export const apiUrl =
   process.env.NODE_ENV === "production"
-    ? "/api/proxy" // 🔥 프로덕션: Vercel 프록시 사용
-    : "https://ec2-43-202-9-100.ap-northeast-2.compute.amazonaws.com"; // 개발환경: 로컬 백엔드
+    ? "/api/proxy" //
+    : "https://ec2-43-202-9-100.ap-northeast-2.compute.amazonaws.com";
 
 const Login = () => {
   const handleGithubLoginBtn = async () => {
