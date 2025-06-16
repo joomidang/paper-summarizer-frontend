@@ -10,7 +10,7 @@ export const apiUrl =
 
 const Login = () => {
   const handleGithubLoginBtn = async () => {
-    window.location.href = `https://ec2-43-202-9-100.ap-northeast-2.compute.amazonaws.com/api/auth/github`;
+    window.location.href = `https://ec2-43-202-9-100.ap-northeast-2.compute.amazonaws.com:8080/api/auth/github`;
   };
 
   return (
