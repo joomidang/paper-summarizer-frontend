@@ -19,13 +19,16 @@ const AuthCallback = () => {
           throw new Error("인증 코드를 찾을 수 없습니다");
         }
 
-        const response = await fetch(`/api/auth/github/callback?code=${code}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
+        const response = await fetch(
+          `${apiUrl}/api/auth/github/callback?code=${code}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
 
         console.log("백엔드 응답 상태:", response.status);
 
