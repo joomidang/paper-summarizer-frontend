@@ -80,6 +80,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { apiUrl } from "./Login";
 
 const GithubCallbackContent = () => {
   const router = useRouter();
@@ -87,7 +88,7 @@ const GithubCallbackContent = () => {
   const [error, setError] = useState<string>("");
 
   const getApiEndpoint = (code: string) => {
-    return `/api/auth/github/callback?code=${code}`;
+    return `${apiUrl}/api/auth/github/callback?code=${code}`;
   };
 
   useEffect(() => {
