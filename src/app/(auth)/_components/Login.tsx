@@ -6,11 +6,11 @@ import React from "react";
 export const apiUrl =
   process.env.NODE_ENV === "production"
     ? "/api/proxy" // 🔥 프로덕션: Vercel 프록시 사용
-    : "http://localhost:8080"; // 개발환경: 로컬 백엔드
+    : "https://ec2-43-202-9-100.ap-northeast-2.compute.amazonaws.com"; // 개발환경: 로컬 백엔드
 
 const Login = () => {
   const handleGithubLoginBtn = async () => {
-    window.location.href = `http://ec2-43-202-9-100.ap-northeast-2.compute.amazonaws.com:8080/api/auth/github`;
+    window.location.href = `https://ec2-43-202-9-100.ap-northeast-2.compute.amazonaws.com/api/auth/github`;
   };
 
   return (
