@@ -20,8 +20,8 @@ const AuthCallback = () => {
         }
         
         // 프록시를 통해 백엔드 API 호출
-        const response = await fetch(`/api/proxy/api/auth/github/callback?code=${code}`,
-        // const response = await fetch(`${apiUrl}/api/auth/github/callback?code=${code}`,
+        // const response = await fetch(`/api/proxy/api/auth/github/callback?code=${code}`,
+        const response = await fetch(`${apiUrl}/api/auth/github/callback?code=${code}`,
           {
             method: "GET",
             headers: {
