@@ -11,6 +11,27 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
+              
+      // 🔥 변경: URL에서 토큰 직접 확인
+      const accessToken = searchParams.get("access_token");
+      const refreshToken = searchParams.get("refresh_token");
+      
+      if (accessToken) {
+        // 토큰이 URL에 있으면 직접 사용
+        console.log("URL에서 토큰 발견, 직접 처리");
+        
+        // 쿠키에 저장
+        document.cookie = `accessToken=${accessToken}; path=/; max-age=${24 * 60 * 60}; secure; samesite=strict`;
+        if (refreshToken) {
+          document.cookie = `refreshToken=${refreshToken}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`;
+        }
+        
+        console.log("인증 성공! 홈으로 이동합니다.");
+        router.push("/");
+        return;
+      }
+
+
         console.log("GitHub 인증 코드 처리 중...");
         const code = searchParams.get("code");
         console.log("GitHub 인증 코드:", code);
