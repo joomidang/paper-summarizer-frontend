@@ -18,9 +18,10 @@ const AuthCallback = () => {
         if (!code) {
           throw new Error("인증 코드를 찾을 수 없습니다");
         }
-
-        const response = await fetch(
-          `${apiUrl}/api/auth/github/callback?code=${code}`,
+        
+        // 프록시를 통해 백엔드 API 호출
+        const response = await fetch(`/api/proxy/api/auth/github/callback?code=${code}`,
+        // const response = await fetch(`${apiUrl}/api/auth/github/callback?code=${code}`,
           {
             method: "GET",
             headers: {
